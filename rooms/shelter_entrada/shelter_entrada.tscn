@@ -1,14 +1,13 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://rooms/shared/room_controller.gd" id="1_room"]
 [ext_resource type="Script" path="res://systems/grid/room_grid_data.gd" id="2_grid"]
 [ext_resource type="Script" path="res://rooms/shared/room_data.gd" id="3_room_data"]
 [ext_resource type="Script" path="res://systems/placement/placed_object_data.gd" id="4_placement"]
-[ext_resource type="Script" path="res://rooms/shared/room_transition_data.gd" id="5_transition"]
-[ext_resource type="PackedScene" path="res://entities/animals/cats/cat_siames.tscn" id="6_cat"]
-[ext_resource type="PackedScene" path="res://entities/furniture/table/table.tscn" id="7_table"]
-[ext_resource type="PackedScene" path="res://entities/furniture/rug/rug.tscn" id="8_rug"]
-[ext_resource type="PackedScene" path="res://rooms/shelter_dogs/shelter_dogs.tscn" id="9_dogs"]
+[ext_resource type="PackedScene" path="res://entities/animals/cats/cat_siames.tscn" id="5_cat"]
+[ext_resource type="PackedScene" path="res://entities/furniture/table/table.tscn" id="6_table"]
+[ext_resource type="PackedScene" path="res://entities/furniture/rug/rug.tscn" id="7_rug"]
+[ext_resource type="PackedScene" path="res://systems/transitions/doorway.tscn" id="8_doorway"]
 
 [sub_resource type="Resource" id="RoomGridData_entrada"]
 script = ExtResource("2_grid")
@@ -17,35 +16,40 @@ cells = PackedByteArray("AQEBAQEBAQEBAQEBAQEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 [sub_resource type="Resource" id="PlacedRug"]
 script = ExtResource("4_placement")
 id = "Rug_Entrance"
-scene = ExtResource("8_rug")
+scene = ExtResource("7_rug")
 base_cell = Vector2i(2, 8)
 
 [sub_resource type="Resource" id="PlacedTable"]
 script = ExtResource("4_placement")
 id = "Table_Entrance"
-scene = ExtResource("7_table")
+scene = ExtResource("6_table")
 base_cell = Vector2i(10, 6)
 
 [sub_resource type="Resource" id="PlacedCat"]
 script = ExtResource("4_placement")
 id = "CatSiames_Test"
-scene = ExtResource("6_cat")
+scene = ExtResource("5_cat")
 base_cell = Vector2i(5, 8)
-
-[sub_resource type="Resource" id="DogsTransition"]
-script = ExtResource("5_transition")
-id = "north_to_shelter_dogs"
-trigger_cells = Array[Vector2i]([Vector2i(16, 1), Vector2i(17, 1), Vector2i(18, 1), Vector2i(19, 1)])
-destination_scene = ExtResource("9_dogs")
-destination_spawn_cell = Vector2i(18, 4)
 
 [sub_resource type="Resource" id="RoomData_entrada"]
 script = ExtResource("3_room_data")
 room_id = "shelter_entrada"
 grid_data = SubResource("RoomGridData_entrada")
 placements = Array[ExtResource("4_placement")]([SubResource("PlacedRug"), SubResource("PlacedTable"), SubResource("PlacedCat")])
-transitions = Array[ExtResource("5_transition")]([SubResource("DogsTransition")])
 
 [node name="ShelterEntrada" type="Node2D"]
 script = ExtResource("1_room")
 room_data = SubResource("RoomData_entrada")
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="from_shelter_dogs" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(888, 168)
+metadata/grid_cell = Vector2i(18, 3)
+
+[node name="NorthToDogs" parent="." instance=ExtResource("8_doorway")]
+destination_scene_path = "res://rooms/shelter_dogs/shelter_dogs.tscn"
+destination_spawn_id = &"from_shelter_entrada"
+grid_cell = Vector2i(16, 2)
+grid_size = Vector2i(4, 1)
+allowed_entry_direction = Vector2(0, -1)

@@ -23,18 +23,24 @@ func _ready() -> void:
 	cell_size = Vector2(get_viewport_rect().size.x / screen_columns, get_viewport_rect().size.y / (room_rows + menu_rows))
 	room_top_row = menu_rows
 	if initial_room != null:
-		load_room(initial_room, initial_spawn_cell)
+		load_room(initial_room, &"", initial_spawn_cell)
 	queue_redraw()
 
 
-func load_room(room_scene: PackedScene, spawn_cell: Vector2i) -> void:
+func load_room(room_scene: PackedScene, spawn_id: StringName, fallback_cell: Vector2i) -> void:
+	if current_room != null and player != null:
+		current_room.detach_player(player)
 	for child in room_container.get_children():
 		child.queue_free()
 	current_room = room_scene.instantiate() as ShelterRoom
 	room_container.add_child(current_room)
 	current_room.configure(cell_size, room_columns, room_rows, room_top_row, show_grid)
-	current_room.transition_reached.connect(_on_transition_reached)
-	player = current_room.create_player(current_room.cell_to_navigation_position(spawn_cell))
+	current_room.doorway_requested.connect(_on_doorway_requested)
+	var spawn_position := current_room.get_spawn_position(spawn_id, fallback_cell) if not spawn_id.is_empty() else current_room.cell_to_navigation_position(fallback_cell)
+	if player == null:
+		player = current_room.create_player(spawn_position)
+	else:
+		current_room.attach_player(player, spawn_position)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -52,20 +58,22 @@ func move_player_to(screen_position: Vector2) -> void:
 		return
 	if interaction_controller.request_at_cell(current_room, player, requested_cell):
 		return
-	current_room.clear_armed_transition()
 	var destination := current_room.get_navigation_destination(requested_cell)
 	if destination != Vector2.INF:
 		player.move_to(destination)
 
 
-func _on_transition_reached(transition: RoomTransitionData) -> void:
-	if transition.destination_scene != null:
-		load_room(transition.destination_scene, transition.destination_spawn_cell)
-
-
-func _physics_process(_delta: float) -> void:
-	if current_room != null and player != null:
-		current_room.check_transition_at_player_base(player.global_position)
+func _on_doorway_requested(doorway: Doorway, doorway_player: PlayerController) -> void:
+	if doorway_player != player or doorway.destination_scene_path.is_empty():
+		return
+	if doorway.transition_sound != null:
+		$TransitionAudio.stream = doorway.transition_sound
+		$TransitionAudio.play()
+	var destination_scene := load(doorway.destination_scene_path) as PackedScene
+	if destination_scene == null:
+		push_error("No se pudo cargar el destino de la puerta: %s" % doorway.destination_scene_path)
+		return
+	load_room(destination_scene, doorway.destination_spawn_id, initial_spawn_cell)
 
 
 func _draw() -> void:

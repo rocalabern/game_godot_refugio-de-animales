@@ -6,11 +6,14 @@ colisiona y decide Y-Sort, navegación y transiciones.
 
 ## Arquitectura de contenido
 
-Cada sala usa un `RoomData`, con tres fuentes de contenido editables:
+Cada sala usa un `RoomData`, con dos fuentes de contenido editables:
 
 - `RoomGridData`: colisiones base pintadas en el editor.
 - `PlacedObjectData`: escena y casilla base de cada objeto colocado.
-- `RoomTransitionData`: puerta, sala destino y casilla de aparición.
+
+Las transiciones usan una instancia reutilizable de `Doorway` (`Area2D`) dentro
+de cada escena de habitación. Cada puerta selecciona en el Inspector su escena
+destino, el nombre del `Marker2D` de aparición y un sonido opcional.
 
 `RoomOccupancy` combina automáticamente el grid base y los objetos para generar
 la navegación nativa y las colisiones físicas. La sala no conoce tipos concretos
@@ -36,6 +39,16 @@ ve en 1 x 2 pero bloquea únicamente su base; una alfombra no bloquea nada.
 
 No hace falta modificar navegación ni colisiones: se reconstruyen desde el
 contrato del objeto.
+
+## Crear una puerta entre habitaciones
+
+1. Instancia `systems/transitions/doorway.tscn` en la habitación de origen.
+2. Define su zona de grid, dirección de entrada, escena de destino y el ID del
+   punto de aparición.
+3. En la habitación de destino, añade un `Marker2D` con ese ID como nombre y la
+   metadata `grid_cell` para que respete el tamaño dinámico de la cuadrícula.
+
+La puerta inversa es otra instancia `Doorway` configurada explícitamente.
 
 ## Pintar colisión base
 

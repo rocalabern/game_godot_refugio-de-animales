@@ -24,5 +24,8 @@ deben ser consultadas por una habitación: se colocan mediante `PlacedObjectData
 
 - `RoomGridData`: bloqueos fijos del fondo, pintados en el editor.
 - `PlacedObjectData`: escena e identidad de un objeto colocado.
-- `RoomTransitionData`: casillas de puerta y destino.
-- `RoomData`: agrupa los tres anteriores por habitación.
+- `RoomData`: agrupa los datos de suelo y objetos por habitación.
+
+Las puertas no están en `RoomData`: son instancias `Doorway` (`Area2D`) que se
+ven y se configuran dentro de la escena. Señalan al `GameController`, que
+conserva al jugador, carga la sala destino y lo sitúa en el `Marker2D` solicitado.

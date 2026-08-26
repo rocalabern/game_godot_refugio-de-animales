@@ -8,3 +8,5 @@ script = ExtResource("1_main")
 initial_room = ExtResource("2_entrance")
 
 [node name="RoomContainer" type="Node2D" parent="."]
+
+[node name="TransitionAudio" type="AudioStreamPlayer" parent="."]

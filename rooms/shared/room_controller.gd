@@ -4,7 +4,7 @@ extends Node2D
 
 const PLAYER_SCENE := preload("res://entities/player/player.tscn")
 
-signal transition_reached(transition: RoomTransitionData)
+signal doorway_requested(doorway: Doorway, player: PlayerController)
 
 @export var room_data: RoomData:
 	set(value):
@@ -31,13 +31,14 @@ var room_top_row := 1
 var show_grid := true
 var navigation_region: NavigationRegion2D
 var world_y_sort: Node2D
-var transition_armed: RoomTransitionData
+var runtime_world: Node2D
 var occupancy := RoomOccupancy.new()
 var room_objects: Array[PlaceableObject] = []
 
 
 func _ready() -> void:
 	_connect_grid_data()
+	_connect_doorways()
 	if Engine.is_editor_hint():
 		call_deferred("queue_redraw")
 
@@ -59,6 +60,8 @@ func configure(new_cell_size: Vector2, new_room_columns: int, new_room_rows: int
 	room_rows = new_room_rows
 	room_top_row = new_room_top_row
 	show_grid = new_show_grid
+	configure_spawn_points()
+	configure_doorways()
 	if not Engine.is_editor_hint():
 		build_runtime_world()
 	queue_redraw()
@@ -71,6 +74,18 @@ func create_player(spawn_position: Vector2) -> PlayerController:
 	new_player.position = spawn_position
 	world_y_sort.add_child(new_player)
 	return new_player
+
+
+func attach_player(existing_player: PlayerController, spawn_position: Vector2) -> void:
+	existing_player.stop()
+	existing_player.cell_size = cell_size
+	existing_player.position = spawn_position
+	world_y_sort.add_child(existing_player)
+
+
+func detach_player(existing_player: PlayerController) -> void:
+	if existing_player.get_parent() != null:
+		existing_player.get_parent().remove_child(existing_player)
 
 
 func get_room_id() -> String:
@@ -86,41 +101,25 @@ func get_requested_cell(screen_position: Vector2) -> Vector2i:
 
 
 func get_navigation_destination(requested_cell: Vector2i) -> Vector2:
-	var transition := get_transition_at_cell(requested_cell)
-	if transition != null:
-		if transition.requires_click:
-			transition_armed = transition
-		var entry_cell := Vector2i(requested_cell.x, room_top_row + 1)
-		return cell_to_navigation_position(entry_cell) if is_walkable_for_player(entry_cell) else Vector2.INF
 	if requested_cell.y <= room_top_row:
+		# Permite clicar la pared/puerta visible: el destino real es la primera
+		# casilla navegable cubierta por su Area2D.
+		for doorway in find_children("*", "Doorway", true, false):
+			if requested_cell.x >= doorway.grid_cell.x and requested_cell.x < doorway.grid_cell.x + doorway.grid_size.x:
+				var doorway_cell := Vector2i(requested_cell.x, doorway.grid_cell.y)
+				if is_walkable_for_player(doorway_cell):
+					return cell_to_navigation_position(doorway_cell)
 		return Vector2.INF
 	var clamped := Vector2i(clampi(requested_cell.x, 0, room_columns - 1), clampi(requested_cell.y, room_top_row + 1, room_top_row + room_rows - 1))
 	return cell_to_navigation_position(clamped) if is_walkable_for_player(clamped) else Vector2.INF
 
 
-func get_transition_at_cell(cell: Vector2i) -> RoomTransitionData:
-	if room_data == null:
-		return null
-	for transition in room_data.transitions:
-		if transition.trigger_cells.has(cell):
-			return transition
-	return null
-
-
-func clear_armed_transition() -> void:
-	transition_armed = null
-
-
-func check_transition_at_player_base(base_position: Vector2) -> void:
-	if transition_armed == null:
-		return
-	var base_cell := Vector2i(floori(base_position.x / cell_size.x), floori(base_position.y / cell_size.y))
-	for trigger_cell in transition_armed.trigger_cells:
-		if base_cell == Vector2i(trigger_cell.x, room_top_row + 1):
-			var reached := transition_armed
-			transition_armed = null
-			transition_reached.emit(reached)
-			return
+func get_spawn_position(spawn_id: StringName, fallback_cell: Vector2i) -> Vector2:
+	var marker := find_child(String(spawn_id), true, false) as Marker2D
+	if marker != null:
+		return marker.position
+	push_warning("No existe el Marker2D de aparición '%s' en '%s'." % [spawn_id, get_room_id()])
+	return cell_to_navigation_position(fallback_cell)
 
 
 func is_walkable_for_player(cell: Vector2i) -> bool:
@@ -152,13 +151,16 @@ func get_interaction_destination(object: PlaceableObject) -> Vector2:
 
 
 func build_runtime_world() -> void:
-	for child in get_children():
-		child.queue_free()
+	if runtime_world != null and is_instance_valid(runtime_world):
+		runtime_world.free()
 	room_objects.clear()
+	runtime_world = Node2D.new()
+	runtime_world.name = "RuntimeWorld"
+	add_child(runtime_world)
 	world_y_sort = Node2D.new()
 	world_y_sort.name = "WorldYSort"
 	world_y_sort.y_sort_enabled = true
-	add_child(world_y_sort)
+	runtime_world.add_child(world_y_sort)
 	instantiate_placements()
 	occupancy.rebuild(grid_data, room_columns, room_rows, room_top_row, room_objects)
 	create_navigation_region()
@@ -184,7 +186,7 @@ func instantiate_placements() -> void:
 		if object.uses_y_sort:
 			world_y_sort.add_child(object)
 		else:
-			add_child(object)
+			runtime_world.add_child(object)
 
 
 func create_navigation_region() -> void:
@@ -203,13 +205,13 @@ func create_navigation_region() -> void:
 			navigation_polygon.add_polygon(PackedInt32Array([start, start + 1, start + 2, start + 3]))
 	navigation_polygon.vertices = vertices
 	navigation_region.navigation_polygon = navigation_polygon
-	add_child(navigation_region)
+	runtime_world.add_child(navigation_region)
 
 
 func create_generated_collisions() -> void:
 	var collision_root := Node2D.new()
 	collision_root.name = "RoomGeneratedCollisions"
-	add_child(collision_root)
+	runtime_world.add_child(collision_root)
 	for cell in occupancy.blocked_cells:
 		if not occupancy.needs_generated_physics(cell):
 			continue
@@ -229,9 +231,7 @@ func _draw() -> void:
 	draw_rect(room_rect, floor_color)
 	draw_rect(room_rect, Color("5a4135"), false, 7.0)
 	draw_rect(Rect2(room_rect.position, Vector2(room_rect.size.x, cell_size.y)), Color("c58e70"))
-	var destination_label := ""
-	if room_data != null and not room_data.transitions.is_empty():
-		destination_label = "PARED DE FONDO → SALA CONECTADA"
+	var destination_label := "PARED DE FONDO → SALA CONECTADA" if not find_children("*", "Doorway", true, false).is_empty() else ""
 	draw_string(ThemeDB.fallback_font, room_rect.position + Vector2(16, cell_size.y * 0.62), destination_label, HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("2b1a16"))
 	if show_grid:
 		var grid_color := Color(0.25, 0.20, 0.16, 0.22)
@@ -245,3 +245,24 @@ func _draw() -> void:
 			for y in range(mini(room_rows, grid_data.rows)):
 				if grid_data.is_blocked(x, y):
 					draw_rect(Rect2(Vector2(x * cell_size.x, (room_top_row + y) * cell_size.y), cell_size).grow(-3.0), Color(0.82, 0.16, 0.18, 0.55))
+
+
+func configure_spawn_points() -> void:
+	for marker in find_children("*", "Marker2D", true, false):
+		if marker.has_meta("grid_cell"):
+			marker.position = cell_to_navigation_position(marker.get_meta("grid_cell"))
+
+
+func configure_doorways() -> void:
+	for doorway in find_children("*", "Doorway", true, false):
+		doorway.configure_grid_size(cell_size)
+
+
+func _connect_doorways() -> void:
+	for doorway in find_children("*", "Doorway", true, false):
+		if not doorway.transition_requested.is_connected(_on_doorway_transition_requested):
+			doorway.transition_requested.connect(_on_doorway_transition_requested)
+
+
+func _on_doorway_transition_requested(doorway: Doorway, player: PlayerController) -> void:
+	doorway_requested.emit(doorway, player)
