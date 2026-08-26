@@ -1,0 +1,28 @@
+# Godot 4+: caché e información generada por el editor
+.godot/
+
+# Android generado al exportar
+/android/
+
+# Configuración de exportación antigua o confidencial
+export.cfg
+export_credentials.cfg
+
+# Archivos temporales
+*.tmp
+
+# Traducciones generadas desde CSV
+*.translation
+
+# Solo si algún día usáis C# / .NET
+.mono/
+data_*/
+mono_crash.*.json
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Informacion personal de desarrollo
+prompts/
+_dev/
