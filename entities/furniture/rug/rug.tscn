@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://entities/furniture/rug/rug.gd" id="1_rug"]
+
+[node name="Rug" type="Node2D"]
+script = ExtResource("1_rug")
+blocks_navigation = false
+uses_y_sort = false

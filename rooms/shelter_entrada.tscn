@@ -1,7 +1,7 @@
-[gd_scene format=4 uid="uid://daxqf5skuf0i4"]
+[gd_scene format=4 uid="uid://cnvqs74a8sbgn"]
 
-[ext_resource type="Script" uid="uid://c1f2d6oeyt1wc" path="res://shelter_room.gd" id="1_room"]
-[ext_resource type="Script" uid="uid://cddtdtue83vr1" path="res://room_grid_data.gd" id="2_grid"]
+[ext_resource type="Script" path="res://shelter_room.gd" id="1_room"]
+[ext_resource type="Script" path="res://room_grid_data.gd" id="2_grid"]
 
 [sub_resource type="Resource" id="RoomGridData_entrada"]
 script = ExtResource("2_grid")

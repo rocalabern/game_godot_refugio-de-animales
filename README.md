@@ -1,27 +1,47 @@
-# Prototipo de movimiento en grid y navegación nativa
+# Refugio de animales
 
-- Cada habitación mide **20 x 12** casillas útiles.
-- Hay una fila superior adicional reservada a menús; el área visible se divide en 21 columnas y 13 filas visuales. Los valores están expuestos en `Main`.
-- El cuadrado azul ocupa **1 x 2** visualmente, pero solo su casilla inferior tiene hit box y afecta a navegación/colisiones; la parte superior puede pasar visualmente detrás de objetos para dar profundidad.
-- La alfombra (`Rug`) usa tamaño configurable y `z_index = -1`, por lo que el personaje siempre se dibuja encima.
-- La mesa ocupa 2 x 2, bloquea sus cuatro casillas y comparte el contenedor `WorldYSort` con el jugador. Godot decide correctamente qué objeto se muestra delante.
-- El movimiento usa `NavigationRegion2D` y `NavigationAgent2D`. La cuadrícula no calcula rutas: genera el polígono navegable y las colisiones físicas de cada sala.
-- Las casillas rojas son colisiones base. La mesa y futuros muebles se añaden como colisiones dinámicas antes de construir la navegación.
-- La transición a `shelter_dogs` tiene una zona de puerta en la apertura de la pared de fondo (columnas 16 a 19). Solo se arma al clicar expresamente la pared/abertura y se activa cuando el punto de base —la única fila física del personaje— entra en ella.
+Prototipo 2D en Godot: salas de 20 x 12 casillas útiles, con una fila superior
+adicional para el menú. El personaje se ve en 1 x 2, pero solo su base inferior
+colisiona y decide Y-Sort, navegación y transiciones.
 
-## Pintar la colisión base dentro de Godot
+## Arquitectura de contenido
 
-1. Abre `rooms/shelter_entrada.tscn` o `rooms/shelter_dogs.tscn` en la vista **2D**.
-2. Selecciona el nodo raíz `ShelterEntrada` o `ShelterDogs`.
-3. Pulsa **Pintar colisiones** en la barra superior de la vista 2D.
-4. Haz clic en una casilla para alternarla: rojo significa bloqueada y transparente significa caminable.
-5. Guarda la escena. `Ctrl+Z` y `Ctrl+Y` deshacen o rehacen cada pincelada.
+Cada sala usa un `RoomData`, con tres fuentes de contenido editables:
 
-Las casillas se guardan en el recurso `RoomGridData` integrado en cada escena, no en un PNG. Estas son las colisiones base; la mesa y futuros muebles se suman como colisiones dinámicas.
+- `RoomGridData`: colisiones base pintadas en el editor.
+- `PlacedObjectData`: escena y casilla base de cada objeto colocado.
+- `RoomTransitionData`: puerta, sala destino y casilla de aparición.
 
-## Animales
+`RoomOccupancy` combina automáticamente el grid base y los objetos para generar
+la navegación nativa y las colisiones físicas. La sala no conoce tipos concretos
+como gatos, mesas o alfombras.
 
-- `entities/animals/cat.tscn` es la escena base `Cat`: salud, hambre, energía, felicidad, comer, jugar, descansar e interacción táctil.
-- `entities/animals/cat_siames.tscn` hereda de `Cat` y usa `assets/cat_siames.png`.
-- Todos los gatos usan un aspecto visual de 1 columna x 2 filas; su origen y zona interactuable están en la base, para usar correctamente Y-Sort.
-- Como prueba actual, se instancia un `CatSiames` en la casilla de base `(5, 8)` de `shelter_entrada`. Ocupa visualmente 1 columna x 2 filas, pero solo la fila inferior tiene colisión e impide el paso.
+```text
+PlaceableObject
+└── AnimalObject
+    └── Cat
+        └── CatSiames
+```
+
+Los muebles heredan directamente de `PlaceableObject`. Cada tipo declara las
+casillas visuales, las que bloquea y las de interacción. Por ejemplo: un gato se
+ve en 1 x 2 pero bloquea únicamente su base; una alfombra no bloquea nada.
+
+## Añadir un objeto a una sala
+
+1. Crea una escena que herede de `PlaceableObject` o `AnimalObject`.
+2. Define en ella su huella, bloqueo y dibujo.
+3. En el recurso `RoomData` de la sala, añade un `PlacedObjectData` con la escena
+   y su `base_cell`.
+
+No hace falta modificar navegación ni colisiones: se reconstruyen desde el
+contrato del objeto.
+
+## Pintar colisión base
+
+1. Abre una escena dentro de `rooms/` en la vista **2D**.
+2. Selecciona el nodo raíz de la sala.
+3. Activa **Pintar colisiones** en el panel inferior **Colisiones de sala**.
+4. Clic alterna el bloqueo: rojo significa bloqueado.
+
+Las colisiones pintadas se guardan dentro del `RoomGridData` de cada escena.

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
-[ext_resource type="PackedScene" path="res://entities/animals/cat.tscn" id="1_cat"]
-[ext_resource type="Texture2D" path="res://assets/cat_siames.png" id="2_texture"]
+[ext_resource type="PackedScene" path="res://entities/animals/cats/cat.tscn" id="1_cat"]
+[ext_resource type="Texture2D" path="res://assets/animals/cats/siamese/cat_siames.png" id="2_texture"]
 
 [node name="CatSiames" instance=ExtResource("1_cat")]
 display_name = "Siamés"

@@ -49,7 +49,10 @@ func _update_collision() -> void:
 		return
 	var shape := RectangleShape2D.new()
 	# El dibujo ocupa dos filas, pero solo la fila inferior es física.
-	shape.size = Vector2(cell_size.x * 0.72, cell_size.y * 0.82)
+	# La base física es exactamente una casilla completa. La parte superior del
+	# dibujo puede superponerse visualmente, pero el personaje no puede entrar en
+	# la casilla base de otro ocupante ni colarse por las esquinas.
+	shape.size = cell_size
 	collision_shape.shape = shape
 	collision_shape.position = Vector2.ZERO
 

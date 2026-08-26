@@ -1,0 +1,33 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://rooms/shared/room_controller.gd" id="1_room"]
+[ext_resource type="Script" path="res://systems/grid/room_grid_data.gd" id="2_grid"]
+[ext_resource type="Script" path="res://rooms/shared/room_data.gd" id="3_room_data"]
+[ext_resource type="Script" path="res://systems/placement/placed_object_data.gd" id="4_placement"]
+[ext_resource type="PackedScene" path="res://entities/furniture/table/table.tscn" id="5_table"]
+[ext_resource type="PackedScene" path="res://entities/furniture/rug/rug.tscn" id="6_rug"]
+
+[sub_resource type="Resource" id="RoomGridData_dogs"]
+script = ExtResource("2_grid")
+
+[sub_resource type="Resource" id="PlacedRug"]
+script = ExtResource("4_placement")
+id = "Rug_Dogs"
+scene = ExtResource("6_rug")
+base_cell = Vector2i(2, 9)
+
+[sub_resource type="Resource" id="PlacedTable"]
+script = ExtResource("4_placement")
+id = "Table_Dogs"
+scene = ExtResource("5_table")
+base_cell = Vector2i(14, 7)
+
+[sub_resource type="Resource" id="RoomData_dogs"]
+script = ExtResource("3_room_data")
+room_id = "shelter_dogs"
+grid_data = SubResource("RoomGridData_dogs")
+placements = Array[ExtResource("4_placement")]([SubResource("PlacedRug"), SubResource("PlacedTable")])
+
+[node name="ShelterDogs" type="Node2D"]
+script = ExtResource("1_room")
+room_data = SubResource("RoomData_dogs")

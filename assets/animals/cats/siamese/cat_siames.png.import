@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://nqtsbiu15n2k"
-path="res://.godot/imported/cat_siames.png-f6b340693c5e743b47b7fddd3426a0ac.ctex"
+uid="uid://bnn8d3pkp000q"
+path="res://.godot/imported/cat_siames.png-152e974d9d4b672e782da9b14f7d5588.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/cat_siames.png"
-dest_files=["res://.godot/imported/cat_siames.png-f6b340693c5e743b47b7fddd3426a0ac.ctex"]
+source_file="res://assets/animals/cats/siamese/cat_siames.png"
+dest_files=["res://.godot/imported/cat_siames.png-152e974d9d4b672e782da9b14f7d5588.ctex"]
 
 [params]
 

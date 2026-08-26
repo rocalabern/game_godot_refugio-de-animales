@@ -1,15 +1,10 @@
 class_name Cat
-extends Node2D
+extends AnimalObject
 
 signal selected(cat: Cat)
 
-## Lógica común para todos los gatos del refugio.
-@export var display_name := "Gato"
+## Lógica específica común para todos los gatos del refugio.
 @export var breed := "Gato común"
-@export_range(0.0, 100.0) var health := 100.0
-@export_range(0.0, 100.0) var hunger := 0.0
-@export_range(0.0, 100.0) var energy := 80.0
-@export_range(0.0, 100.0) var happiness := 80.0
 @export var cell_size := Vector2(48, 48):
 	set(value):
 		cell_size = value
@@ -22,6 +17,9 @@ signal selected(cat: Cat)
 
 
 func _ready() -> void:
+	provides_own_physics_body = true
+	footprint = Vector2i(1, 2)
+	is_interactable = true
 	_update_footprint()
 
 
@@ -29,18 +27,13 @@ func configure_grid_size(new_cell_size: Vector2) -> void:
 	cell_size = new_cell_size
 
 
-func feed() -> void:
-	hunger = maxf(0.0, hunger - 25.0)
-	happiness = minf(100.0, happiness + 5.0)
+func get_navigation_blocking_cells() -> Array[Vector2i]:
+	# El gato se dibuja en 1x2, pero solo sus patas/base ocupan una casilla.
+	return [Vector2i.ZERO] if blocks_navigation else []
 
 
-func play() -> void:
-	energy = maxf(0.0, energy - 12.0)
-	happiness = minf(100.0, happiness + 15.0)
-
-
-func rest() -> void:
-	energy = minf(100.0, energy + 25.0)
+func get_visual_cells() -> Array[Vector2i]:
+	return [Vector2i(0, -1), Vector2i.ZERO]
 
 
 func _update_footprint() -> void:
@@ -59,7 +52,9 @@ func _update_footprint() -> void:
 
 	# Solo la fila inferior es interactuable, como en el personaje.
 	var shape := RectangleShape2D.new()
-	shape.size = Vector2(cell_size.x * 0.72, cell_size.y * 0.82)
+	# El gato usa una única casilla física completa en las patas/base. El PNG y
+	# su transparencia no participan nunca en el cálculo de colisiones.
+	shape.size = cell_size
 	collision_shape.shape = shape
 	body_collision_shape.shape = shape
 
