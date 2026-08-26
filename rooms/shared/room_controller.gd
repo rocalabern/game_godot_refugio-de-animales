@@ -12,6 +12,10 @@ signal doorway_requested(doorway: Doorway, player: PlayerController)
 		room_data = value
 		_connect_grid_data()
 		queue_redraw()
+@export_range(1, 4, 1) var wall_height_cells := 2:
+	set(value):
+		wall_height_cells = value
+		queue_redraw()
 
 # Propiedad de compatibilidad con el editor de colisiones. La fuente de verdad
 # es RoomData, no una variable separada de la escena.
@@ -231,7 +235,7 @@ func _draw() -> void:
 	var floor_color := Color("f6dfb7") if get_room_id() == "shelter_entrada" else Color("d9e9cf")
 	draw_rect(room_rect, floor_color)
 	draw_rect(room_rect, Color("5a4135"), false, 7.0)
-	draw_rect(Rect2(room_rect.position, Vector2(room_rect.size.x, cell_size.y)), Color("c58e70"))
+	draw_background_wall(room_rect)
 	if show_grid:
 		var grid_color := Color(0.25, 0.20, 0.16, 0.22)
 		for x in range(room_columns + 1):
@@ -244,6 +248,38 @@ func _draw() -> void:
 			for y in range(mini(room_rows, grid_data.rows)):
 				if grid_data.is_blocked(x, y):
 					draw_rect(Rect2(Vector2(x * cell_size.x, (room_top_row + y) * cell_size.y), cell_size).grow(-3.0), Color(0.82, 0.16, 0.18, 0.55))
+
+
+func draw_background_wall(room_rect: Rect2) -> void:
+	var wall_rect := Rect2(room_rect.position, Vector2(room_rect.size.x, cell_size.y * wall_height_cells))
+	var openings: Array[Vector2i] = []
+	for doorway in find_children("*", "Doorway", true, false):
+		# Esta es la pared de fondo (norte). Solo las puertas a las que se entra
+		# caminando hacia arriba deben perforarla; una salida sur no abre un hueco
+		# visual en esta pared.
+		if doorway.allowed_entry_direction.y >= 0.0:
+			continue
+		var start_column := clampi(doorway.grid_cell.x, 0, room_columns)
+		var end_column := clampi(doorway.grid_cell.x + doorway.grid_size.x, 0, room_columns)
+		if end_column > start_column:
+			openings.append(Vector2i(start_column, end_column))
+	openings.sort_custom(func(a: Vector2i, b: Vector2i) -> bool: return a.x < b.x)
+
+	var next_column := 0
+	for opening in openings:
+		if opening.x > next_column:
+			draw_wall_section(wall_rect, next_column, opening.x)
+		next_column = maxi(next_column, opening.y)
+	if next_column < room_columns:
+		draw_wall_section(wall_rect, next_column, room_columns)
+
+
+func draw_wall_section(wall_rect: Rect2, from_column: int, to_column: int) -> void:
+	var section := Rect2(
+		wall_rect.position + Vector2(from_column * cell_size.x, 0),
+		Vector2((to_column - from_column) * cell_size.x, wall_rect.size.y)
+	)
+	draw_rect(section, Color("c58e70"))
 
 
 func configure_spawn_points() -> void:
