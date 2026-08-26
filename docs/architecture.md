@@ -33,3 +33,11 @@ deben ser consultadas por una habitación: se colocan mediante `PlacedObjectData
 Las puertas no están en `RoomData`: son instancias `Doorway` (`Area2D`) que se
 ven y se configuran dentro de la escena. Señalan al `GameController`, que
 conserva al jugador, carga la sala destino y lo sitúa en el `Marker2D` solicitado.
+
+## Convención de nombres
+
+Los nombres técnicos de archivos, escenas, recursos, nodos e IDs usan
+`snake_case`. El idioma se elige según el vocabulario acordado por el equipo;
+por ejemplo, `cat_siames` es un identificador técnico válido. Los nombres que
+ve la persona jugadora se guardan por separado, por ejemplo
+`display_name = "Siamés"`.
