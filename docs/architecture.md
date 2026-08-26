@@ -2,14 +2,16 @@
 
 ## Flujo de una habitación
 
-`GameController` carga una escena de habitación y le pasa el tamaño real de
-casilla. `ShelterRoom` lee su `RoomData`, instancia sus `PlacedObjectData` y
-construye un `RoomOccupancy`.
+`GameController` trabaja con una resolución virtual fija de 1008 x 624 y una
+casilla de 48 px. `ShelterRoom` lee su `RoomData`, las capas `TileMapLayer` de la
+escena, instancia sus `PlacedObjectData` y construye un `RoomOccupancy`.
 
-`RoomOccupancy` es la fuente única de verdad de las casillas bloqueadas. A partir
-de ella se crean `NavigationRegion2D` y las colisiones generadas. Un objeto que
-ya ofrece su propio `StaticBody2D`, como un animal, se excluye únicamente de las
-colisiones generadas; sigue incluido en la navegación.
+Las colisiones estáticas pertenecen a los tiles de pared del `TileSet` y Godot
+las genera automáticamente en `WallTiles`. `RoomOccupancy` lee esos tiles y
+combina sus celdas con los objetos dinámicos para construir el
+`NavigationRegion2D`. Las colisiones generadas solo se usan para objetos que no
+aportan su propio `StaticBody2D`; un animal sigue aportando física y navegación
+por medio de su contrato.
 
 ## Contratos
 
@@ -22,9 +24,11 @@ deben ser consultadas por una habitación: se colocan mediante `PlacedObjectData
 
 ## Datos editables
 
-- `RoomGridData`: bloqueos fijos del fondo, pintados en el editor.
+- `shelter_tileset.tres`: reglas reutilizables de visual, colisión y futuras
+  propiedades de cada tile.
+- `FloorTiles`, `WallTiles`, `ForegroundTiles`: mapa pintado de cada sala.
 - `PlacedObjectData`: escena e identidad de un objeto colocado.
-- `RoomData`: agrupa los datos de suelo y objetos por habitación.
+- `RoomData`: identidad y objetos de una habitación.
 
 Las puertas no están en `RoomData`: son instancias `Doorway` (`Area2D`) que se
 ven y se configuran dentro de la escena. Señalan al `GameController`, que

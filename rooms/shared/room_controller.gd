@@ -7,27 +7,7 @@ const EDITOR_CELL_SIZE := Vector2(48, 48)
 
 signal doorway_requested(doorway: Doorway, player: PlayerController)
 
-@export var room_data: RoomData:
-	set(value):
-		room_data = value
-		_connect_grid_data()
-		queue_redraw()
-@export_range(1, 4, 1) var wall_height_cells := 2:
-	set(value):
-		wall_height_cells = value
-		queue_redraw()
-
-# Propiedad de compatibilidad con el editor de colisiones. La fuente de verdad
-# es RoomData, no una variable separada de la escena.
-var grid_data: RoomGridData:
-	get:
-		return room_data.grid_data if room_data != null else null
-	set(value):
-		if room_data == null:
-			room_data = RoomData.new()
-		room_data.grid_data = value
-		_connect_grid_data()
-		queue_redraw()
+@export var room_data: RoomData
 
 var cell_size := Vector2(48, 48)
 var room_columns := 20
@@ -42,21 +22,9 @@ var room_objects: Array[PlaceableObject] = []
 
 
 func _ready() -> void:
-	_connect_grid_data()
 	_connect_doorways()
 	if Engine.is_editor_hint():
 		call_deferred("queue_redraw")
-
-
-func _connect_grid_data() -> void:
-	if grid_data != null and not grid_data.changed.is_connected(_on_grid_data_changed):
-		grid_data.changed.connect(_on_grid_data_changed)
-
-
-func _on_grid_data_changed() -> void:
-	queue_redraw()
-	if not Engine.is_editor_hint():
-		build_runtime_world()
 
 
 func configure(new_cell_size: Vector2, new_room_columns: int, new_room_rows: int, new_room_top_row: int, new_show_grid: bool) -> void:
@@ -167,9 +135,28 @@ func build_runtime_world() -> void:
 	world_y_sort.y_sort_enabled = true
 	runtime_world.add_child(world_y_sort)
 	instantiate_placements()
-	occupancy.rebuild(grid_data, room_columns, room_rows, room_top_row, room_objects)
+	occupancy.rebuild(get_static_blocked_cells(), room_objects)
 	create_navigation_region()
 	create_generated_collisions()
+
+
+func get_static_blocked_cells() -> Dictionary:
+	var blocked: Dictionary = {}
+	for layer in find_children("*", "TileMapLayer", false, false):
+		var tile_layer := layer as TileMapLayer
+		if tile_layer == null:
+			continue
+		for cell in tile_layer.get_used_cells():
+			var tile_data := tile_layer.get_cell_tile_data(cell)
+			if tile_data != null and tile_has_physics(tile_data):
+				blocked[cell] = true
+	return blocked
+
+
+func tile_has_physics(tile_data: TileData) -> bool:
+	# El TileSet inicial usa una capa física. Las paredes llevan al menos un
+	# polígono y los suelos ninguno: el comportamiento pertenece al tile.
+	return tile_data.get_collision_polygons_count(0) > 0
 
 
 func instantiate_placements() -> void:
@@ -232,54 +219,12 @@ func create_generated_collisions() -> void:
 
 func _draw() -> void:
 	var room_rect := Rect2(Vector2(0, room_top_row * cell_size.y), Vector2(room_columns * cell_size.x, room_rows * cell_size.y))
-	var floor_color := Color("f6dfb7") if get_room_id() == "shelter_entrada" else Color("d9e9cf")
-	draw_rect(room_rect, floor_color)
-	draw_rect(room_rect, Color("5a4135"), false, 7.0)
-	draw_background_wall(room_rect)
 	if show_grid:
 		var grid_color := Color(0.25, 0.20, 0.16, 0.22)
 		for x in range(room_columns + 1):
 			draw_line(Vector2(x * cell_size.x, room_rect.position.y), Vector2(x * cell_size.x, room_rect.end.y), grid_color, 1.0)
 		for y in range(room_rows + 1):
 			draw_line(Vector2(0, (room_top_row + y) * cell_size.y), Vector2(room_rect.end.x, (room_top_row + y) * cell_size.y), grid_color, 1.0)
-	if Engine.is_editor_hint() and grid_data != null:
-		grid_data.ensure_size()
-		for x in range(mini(room_columns, grid_data.columns)):
-			for y in range(mini(room_rows, grid_data.rows)):
-				if grid_data.is_blocked(x, y):
-					draw_rect(Rect2(Vector2(x * cell_size.x, (room_top_row + y) * cell_size.y), cell_size).grow(-3.0), Color(0.82, 0.16, 0.18, 0.55))
-
-
-func draw_background_wall(room_rect: Rect2) -> void:
-	var wall_rect := Rect2(room_rect.position, Vector2(room_rect.size.x, cell_size.y * wall_height_cells))
-	var openings: Array[Vector2i] = []
-	for doorway in find_children("*", "Doorway", true, false):
-		# Esta es la pared de fondo (norte). Solo las puertas a las que se entra
-		# caminando hacia arriba deben perforarla; una salida sur no abre un hueco
-		# visual en esta pared.
-		if doorway.allowed_entry_direction.y >= 0.0:
-			continue
-		var start_column := clampi(doorway.grid_cell.x, 0, room_columns)
-		var end_column := clampi(doorway.grid_cell.x + doorway.grid_size.x, 0, room_columns)
-		if end_column > start_column:
-			openings.append(Vector2i(start_column, end_column))
-	openings.sort_custom(func(a: Vector2i, b: Vector2i) -> bool: return a.x < b.x)
-
-	var next_column := 0
-	for opening in openings:
-		if opening.x > next_column:
-			draw_wall_section(wall_rect, next_column, opening.x)
-		next_column = maxi(next_column, opening.y)
-	if next_column < room_columns:
-		draw_wall_section(wall_rect, next_column, room_columns)
-
-
-func draw_wall_section(wall_rect: Rect2, from_column: int, to_column: int) -> void:
-	var section := Rect2(
-		wall_rect.position + Vector2(from_column * cell_size.x, 0),
-		Vector2((to_column - from_column) * cell_size.x, wall_rect.size.y)
-	)
-	draw_rect(section, Color("c58e70"))
 
 
 func configure_spawn_points() -> void:

@@ -1,23 +1,32 @@
 # Refugio de animales
 
 Prototipo 2D en Godot: salas de 20 x 12 casillas útiles, con una fila superior
-adicional para el menú. El personaje se ve en 1 x 2, pero solo su base inferior
-colisiona y decide Y-Sort, navegación y transiciones.
+adicional para el menú. La resolución de diseño es 1008 x 624 (casillas de 48 px)
+y Godot la escala manteniendo la proporción en PC, tablet y móvil. El personaje
+se ve en 1 x 2, pero solo su base inferior colisiona y decide Y-Sort, navegación
+y transiciones.
 
 ## Arquitectura de contenido
 
-Cada sala usa un `RoomData`, con dos fuentes de contenido editables:
+Cada sala usa un `RoomData` para sus objetos y tres capas `TileMapLayer` para su
+mapa:
 
-- `RoomGridData`: colisiones base pintadas en el editor.
+- `FloorTiles`: suelos caminables.
+- `WallTiles`: paredes; cada tile de pared ya contiene su colisión.
+- `ForegroundTiles`: decoración alta ordenada por Y.
 - `PlacedObjectData`: escena y casilla base de cada objeto colocado.
+
+El recurso compartido `assets/tiles/shelter/shelter_tileset.tres` es la fuente
+de verdad de los tiles. Pintar una pared crea automáticamente su colisión;
+pintar suelo no crea ninguna.
 
 Las transiciones usan una instancia reutilizable de `Doorway` (`Area2D`) dentro
 de cada escena de habitación. Cada puerta selecciona en el Inspector su escena
 destino, el nombre del `Marker2D` de aparición y un sonido opcional.
 
-`RoomOccupancy` combina automáticamente el grid base y los objetos para generar
-la navegación nativa y las colisiones físicas. La sala no conoce tipos concretos
-como gatos, mesas o alfombras.
+`RoomOccupancy` combina automáticamente las paredes físicas del TileMap y los
+objetos para generar navegación nativa. La sala no conoce tipos concretos como
+gatos, mesas o alfombras.
 
 ```text
 PlaceableObject
@@ -50,11 +59,12 @@ contrato del objeto.
 
 La puerta inversa es otra instancia `Doorway` configurada explícitamente.
 
-## Pintar colisión base
+## Pintar una habitación
 
-1. Abre una escena dentro de `rooms/` en la vista **2D**.
-2. Selecciona el nodo raíz de la sala.
-3. Activa **Pintar colisiones** en el panel inferior **Colisiones de sala**.
-4. Clic alterna el bloqueo: rojo significa bloqueado.
+1. Abre la escena de la habitación en la vista **2D**.
+2. Selecciona `FloorTiles`, `WallTiles` o `ForegroundTiles`.
+3. En el panel inferior **TileMap**, elige un tile del TileSet.
+4. Pinta normalmente. Las paredes bloquean; los suelos no.
 
-Las colisiones pintadas se guardan dentro del `RoomGridData` de cada escena.
+Para una puerta, borra los tiles de `WallTiles` que forman su hueco y ajusta la
+instancia `Doorway` que está sobre él.
