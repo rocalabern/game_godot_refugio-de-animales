@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://cat.gd" id="1_cat"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cat"]
+size = Vector2(34.56, 39.36)
+
+[node name="Cat" type="Node2D"]
+script = ExtResource("1_cat")
+
+[node name="Visual" type="Sprite2D" parent="."]
+centered = false
+
+[node name="InteractionArea" type="Area2D" parent="."]
+input_pickable = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionArea"]
+shape = SubResource("RectangleShape2D_cat")
+
+[node name="CatBody" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CatBody"]
+shape = SubResource("RectangleShape2D_cat")

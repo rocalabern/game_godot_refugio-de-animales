@@ -1,109 +1,78 @@
 extends Node2D
 
-const SPEED := 320.0
-const PLAYER_SIZE := 64.0
+@export_category("Grid")
+@export var screen_columns := 21
+@export var room_columns := 20
+@export var room_rows := 12
+@export var menu_rows := 1
+@export var show_grid := true
 
-@export_file("*.png") var background_path := "res://assets/room_background.png"
-@export_file("*.png") var collision_mask_path := "res://assets/room_collision.png"
-@export var show_collision_mask := false
-@export var spawn_position := Vector2(860, 540)
+const ROOM_ENTRANCE := "shelter_entrada"
+const ROOM_DOGS := "shelter_dogs"
 
-var player_position := Vector2(860, 540)
-var target_position := player_position
-var collision_mask: Image
+var cell_size := Vector2.ZERO
+var room_top_row := 1
+var current_room_id := ROOM_ENTRANCE
+var player: PlayerController
+var current_room: ShelterRoom
 
-@onready var background: Sprite2D = $Background
-@onready var collision_mask_preview: Sprite2D = $CollisionMaskPreview
+@onready var room_container: Node2D = $RoomContainer
 
 
 func _ready() -> void:
-	load_room_images()
-	player_position = find_nearest_walkable_position(spawn_position)
-	target_position = player_position
+	cell_size = Vector2(get_viewport_rect().size.x / screen_columns, get_viewport_rect().size.y / (room_rows + menu_rows))
+	room_top_row = menu_rows
+	load_room(ROOM_ENTRANCE, Vector2i(9, 10))
 	queue_redraw()
 
 
-func load_room_images() -> void:
-	if FileAccess.file_exists(background_path):
-		background.texture = load(background_path)
-		background.position = get_viewport_rect().size / 2.0
-
-	if FileAccess.file_exists(collision_mask_path):
-		collision_mask = Image.load_from_file(collision_mask_path)
-		collision_mask_preview.texture = load(collision_mask_path)
-		collision_mask_preview.position = get_viewport_rect().size / 2.0
-		collision_mask_preview.visible = show_collision_mask
-
-
-func _process(delta: float) -> void:
-	if player_position.distance_to(target_position) > 1.0:
-		move_toward_target(SPEED * delta)
-		queue_redraw()
+func load_room(room_id: String, spawn_cell: Vector2i) -> void:
+	for child in room_container.get_children():
+		child.queue_free()
+	current_room_id = room_id
+	current_room = load("res://rooms/%s.tscn" % room_id).instantiate() as ShelterRoom
+	room_container.add_child(current_room)
+	current_room.configure(cell_size, room_columns, room_rows, room_top_row, show_grid)
+	current_room.transition_reached.connect(_on_transition_reached)
+	player = current_room.create_player(cell_size, current_room.cell_to_navigation_position(spawn_cell))
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		target_position = event.position
-		target_position.x = clamp(target_position.x, PLAYER_SIZE / 2.0, get_viewport_rect().size.x - PLAYER_SIZE / 2.0)
-		target_position.y = clamp(target_position.y, PLAYER_SIZE / 2.0, get_viewport_rect().size.y - PLAYER_SIZE / 2.0)
+		move_player_to(event.position)
+	elif event is InputEventScreenTouch and event.pressed:
+		move_player_to(event.position)
 
 
-func move_toward_target(max_distance: float) -> void:
-	var remaining_motion: Vector2 = player_position.direction_to(target_position) * minf(max_distance, player_position.distance_to(target_position))
-	var horizontal_candidate := player_position + Vector2(remaining_motion.x, 0.0)
-	if not collides_with_mask(horizontal_candidate):
-		player_position.x = horizontal_candidate.x
-
-	var vertical_candidate := player_position + Vector2(0.0, remaining_motion.y)
-	if not collides_with_mask(vertical_candidate):
-		player_position.y = vertical_candidate.y
-
-
-func collides_with_mask(candidate_position: Vector2) -> bool:
-	if collision_mask == null:
-		return false
-
-	var viewport_size := get_viewport_rect().size
-	var half_size := PLAYER_SIZE / 2.0
-	var image_scale := Vector2(
-		float(collision_mask.get_width()) / viewport_size.x,
-		float(collision_mask.get_height()) / viewport_size.y
-	)
-	for offset_x in range(-int(half_size), int(half_size) + 1, 4):
-		for offset_y in range(-int(half_size), int(half_size) + 1, 4):
-			var sample_point := candidate_position + Vector2(offset_x, offset_y)
-			var image_point := Vector2i(sample_point * image_scale)
-			if image_point.x < 0 or image_point.y < 0 or image_point.x >= collision_mask.get_width() or image_point.y >= collision_mask.get_height():
-				return true
-			if collision_mask.get_pixelv(image_point).get_luminance() < 0.1:
-				return true
-	return false
+func move_player_to(screen_position: Vector2) -> void:
+	var requested_cell := Vector2i(floori(screen_position.x / cell_size.x), floori(screen_position.y / cell_size.y))
+	if requested_cell.y < room_top_row:
+		return
+	# Entrar en una puerta exige haber clicado la pared/abertura, no solo pasar
+	# caminando horizontalmente por encima de su Area2D.
+	current_room.set_transition_armed(current_room.is_transition_request(requested_cell))
+	var destination := current_room.get_navigation_destination(requested_cell)
+	if destination == Vector2.INF:
+		current_room.set_transition_armed(false)
+		return
+	player.move_to(destination)
 
 
-func find_nearest_walkable_position(preferred_position: Vector2) -> Vector2:
-	var viewport_size := get_viewport_rect().size
-	var half_size := PLAYER_SIZE / 2.0
-	var safe_position := Vector2(
-		clamp(preferred_position.x, half_size, viewport_size.x - half_size),
-		clamp(preferred_position.y, half_size, viewport_size.y - half_size)
-	)
-	if not collides_with_mask(safe_position):
-		return safe_position
+func _on_transition_reached(destination_room: String) -> void:
+	if destination_room == ROOM_DOGS and current_room_id == ROOM_ENTRANCE:
+		var entrance_column := current_room.get_transition_column_for_position(player.global_position)
+		load_room(ROOM_DOGS, Vector2i(entrance_column, room_top_row + 3))
 
-	for radius in range(8, 600, 8):
-		for sample in range(32):
-			var candidate: Vector2 = safe_position + Vector2.from_angle(TAU * sample / 32.0) * radius
-			candidate.x = clamp(candidate.x, half_size, viewport_size.x - half_size)
-			candidate.y = clamp(candidate.y, half_size, viewport_size.y - half_size)
-			if not collides_with_mask(candidate):
-				return candidate
 
-	return safe_position
+func _physics_process(_delta: float) -> void:
+	# La transición se evalúa con el punto de base del personaje, no con el alto
+	# completo de su sprite ni con una primera superposición de rectángulos.
+	if current_room != null and player != null:
+		current_room.check_transition_at_player_base(player.global_position)
 
 
 func _draw() -> void:
-	if background.texture == null:
-		draw_rect(Rect2(Vector2.ZERO, get_viewport_rect().size), Color("294657"))
-	var square := Rect2(player_position - Vector2.ONE * PLAYER_SIZE / 2.0, Vector2.ONE * PLAYER_SIZE)
-	draw_rect(square, Color("4fc3f7"))
-	draw_rect(square, Color("ffffff"), false, 3.0)
+	if cell_size == Vector2.ZERO:
+		return
+	draw_rect(Rect2(Vector2.ZERO, Vector2(get_viewport_rect().size.x, cell_size.y)), Color("25435c"))
+	draw_string(ThemeDB.fallback_font, Vector2(16, cell_size.y * 0.62), "REFUGIO · %s   |   Menús" % current_room_id.to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color.WHITE)

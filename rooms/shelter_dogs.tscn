@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://shelter_room.gd" id="1_room"]
+[ext_resource type="Script" path="res://room_grid_data.gd" id="2_grid"]
+
+[sub_resource type="Resource" id="RoomGridData_dogs"]
+script = ExtResource("2_grid")
+
+[node name="ShelterDogs" type="Node2D"]
+script = ExtResource("1_room")
+room_id = "shelter_dogs"
+table_cell = Vector2i(13, 6)
+rug_cell = Vector2i(2, 9)
+rug_size = Vector2i(5, 2)
+grid_data = SubResource("RoomGridData_dogs")
