@@ -10,7 +10,7 @@
 
 [sub_resource type="Resource" id="RoomGridData_dogs"]
 script = ExtResource("2_grid")
-cells = PackedByteArray("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+cells = PackedByteArray("AQEBAQEBAQEBAQEBAQEBAQEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
 
 [sub_resource type="Resource" id="PlacedRug"]
 script = ExtResource("4_placement")
@@ -37,13 +37,12 @@ room_data = SubResource("RoomData_dogs")
 [node name="SpawnPoints" type="Node2D" parent="." unique_id=689942931]
 
 [node name="from_shelter_entrada" type="Marker2D" parent="SpawnPoints" unique_id=1737589459]
-position = Vector2(863, 559)
-metadata/grid_cell = Vector2i(18, 10)
+position = Vector2(123, 551)
 
 [node name="SouthToEntrance" parent="." unique_id=2080105482 instance=ExtResource("7_doorway")]
-position = Vector2(864, 600)
+position = Vector2(146, 597)
 destination_scene_path = "res://rooms/shelter_entrada/shelter_entrada.tscn"
 destination_spawn_id = &"from_shelter_dogs"
-grid_cell = Vector2i(16, 12)
+grid_cell = Vector2i(0, 12)
 grid_size = Vector2i(4, 1)
 allowed_entry_direction = Vector2(0, 1)

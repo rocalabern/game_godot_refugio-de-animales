@@ -3,6 +3,7 @@ class_name ShelterRoom
 extends Node2D
 
 const PLAYER_SCENE := preload("res://entities/player/player.tscn")
+const EDITOR_CELL_SIZE := Vector2(48, 48)
 
 signal doorway_requested(doorway: Doorway, player: PlayerController)
 
@@ -231,8 +232,6 @@ func _draw() -> void:
 	draw_rect(room_rect, floor_color)
 	draw_rect(room_rect, Color("5a4135"), false, 7.0)
 	draw_rect(Rect2(room_rect.position, Vector2(room_rect.size.x, cell_size.y)), Color("c58e70"))
-	var destination_label := "PARED DE FONDO → SALA CONECTADA" if not find_children("*", "Doorway", true, false).is_empty() else ""
-	draw_string(ThemeDB.fallback_font, room_rect.position + Vector2(16, cell_size.y * 0.62), destination_label, HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("2b1a16"))
 	if show_grid:
 		var grid_color := Color(0.25, 0.20, 0.16, 0.22)
 		for x in range(room_columns + 1):
@@ -249,8 +248,10 @@ func _draw() -> void:
 
 func configure_spawn_points() -> void:
 	for marker in find_children("*", "Marker2D", true, false):
-		if marker.has_meta("grid_cell"):
-			marker.position = cell_to_navigation_position(marker.get_meta("grid_cell"))
+		# Marker2D es la fuente de verdad: se mueve directamente en el editor.
+		# Las escenas se editan con casillas de 48 px y el juego las adapta al
+		# tamaño de viewport configurado, conservando la ubicación que se ve.
+		marker.position *= cell_size / EDITOR_CELL_SIZE
 
 
 func configure_doorways() -> void:

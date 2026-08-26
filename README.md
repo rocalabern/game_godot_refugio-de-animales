@@ -45,8 +45,8 @@ contrato del objeto.
 1. Instancia `systems/transitions/doorway.tscn` en la habitación de origen.
 2. Define su zona de grid, dirección de entrada, escena de destino y el ID del
    punto de aparición.
-3. En la habitación de destino, añade un `Marker2D` con ese ID como nombre y la
-   metadata `grid_cell` para que respete el tamaño dinámico de la cuadrícula.
+3. En la habitación de destino, añade un `Marker2D` con ese ID como nombre y
+   muévelo directamente a la posición de aparición deseada.
 
 La puerta inversa es otra instancia `Doorway` configurada explícitamente.
 
