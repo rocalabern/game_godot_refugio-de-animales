@@ -209,13 +209,13 @@ show_percentage = false
 theme_override_styles/background = SubResource("StyleBarBackground")
 theme_override_styles/fill = SubResource("StyleBarFill")
 
-[node name="HappinessLabel" type="Label" parent="ProfileRoot/Card/Margin/Content/Body/Details"]
+[node name="EnergyLabel" type="Label" parent="ProfileRoot/Card/Margin/Content/Body/Details"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.32, 0.40, 0.48, 1)
 theme_override_font_sizes/font_size = 20
-text = "Felicidad"
+text = "Energía"
 
-[node name="HappinessBar" type="ProgressBar" parent="ProfileRoot/Card/Margin/Content/Body/Details"]
+[node name="EnergyBar" type="ProgressBar" parent="ProfileRoot/Card/Margin/Content/Body/Details"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 show_percentage = false

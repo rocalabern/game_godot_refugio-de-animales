@@ -42,13 +42,17 @@ ve en 1 x 2 pero bloquea únicamente su base; una alfombra no bloquea nada.
 ## Datos y ficha de animales
 
 `AnimalObject` centraliza los datos editables de cualquier animal: `tipo`,
-`raza`, `edad`, `nombre`, `pet_name`, salud, hambre, higiene, felicidad y sus cuatro
+`raza`, `edad`, `nombre`, `pet_name`, salud, hambre, higiene, felicidad, energía y sus cuatro
 características de personalidad. Al pulsar un animal, se abre directamente una
 ficha modal que pausa el juego, sin mover al personaje.
 La ficha muestra la identidad,
 necesidades y una frase generada a partir de activo, sociable, dependiente y
 adistramiento. Se cierra con la X grande o con `Esc`. Las bandas concretas de
 cada característica están documentadas en `docs/architecture.md`.
+
+Cuando el personaje se acerca a un animal aparece su lista de acciones. Por
+ahora incluye una mano: pulsarla aplica un cuidado, hace vibrar al animal durante
+tres segundos y aumenta salud, hambre, higiene y energía en 15 puntos.
 
 ## Añadir un objeto a una sala
 

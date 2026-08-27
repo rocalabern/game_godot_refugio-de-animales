@@ -16,6 +16,7 @@ extends PlaceableObject
 @export_range(0.0, 100.0, 1.0) var hambre := 0.0
 @export_range(0.0, 100.0, 1.0) var higiene := 100.0
 @export_range(0.0, 100.0, 1.0) var felicidad := 80.0
+@export_range(0.0, 100.0, 1.0) var energia := 100.0
 
 @export_category("Características")
 @export_range(0.0, 100.0, 1.0) var caracteristica_activo := 50.0
@@ -35,6 +36,16 @@ func play() -> void:
 
 func clean() -> void:
 	higiene = minf(100.0, higiene + 25.0)
+
+
+func receive_care(amount := 15.0) -> void:
+	# La primera acción de cuidado es deliberadamente simple: mejora todas las
+	# necesidades visibles y deja espacio para que cada especie la especialice.
+	salud = minf(100.0, salud + amount)
+	hambre = minf(100.0, hambre + amount)
+	higiene = minf(100.0, higiene + amount)
+	energia = minf(100.0, energia + amount)
+	felicidad = minf(100.0, felicidad + amount)
 
 
 func get_personality_description() -> String:

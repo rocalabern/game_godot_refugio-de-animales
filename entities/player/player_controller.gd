@@ -16,6 +16,7 @@ var navigating := false
 
 
 func _ready() -> void:
+	add_to_group("player")
 	_update_collision()
 	queue_redraw()
 

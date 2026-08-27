@@ -23,7 +23,7 @@ casillas relativas para representarse de otro modo.
 deben ser consultadas por una habitación: se colocan mediante `PlacedObjectData`.
 
 `AnimalObject` contiene los datos de identidad (`tipo`, `raza`, `edad`,
-`nombre`, `pet_name`), necesidades (`salud`, `hambre`, `higiene`, `felicidad`) y las cuatro
+`nombre`, `pet_name`), necesidades (`salud`, `hambre`, `higiene`, `felicidad`, `energia`) y las cuatro
 características de personalidad. La ficha modal `AnimalProfile` usa únicamente
 este contrato: muestra identidad y necesidades, y genera una frase a partir de
 activo, sociable, dependiente y adistramiento. Los valores de 41 a 59 reciben
@@ -37,6 +37,8 @@ una etiqueta neutral para que la frase siempre tenga un resultado.
 - `nombre`: nombre descriptivo del animal.
 - `pet_name`: nombre individual mostrado como título de su ficha; si está vacío,
   la ficha muestra `nombre`.
+- `receive_care()`: acción reutilizable de cuidado; aumenta salud, hambre,
+  higiene, energía y felicidad, sin superar 100.
 
 La descripción aplica estas bandas a cada característica:
 

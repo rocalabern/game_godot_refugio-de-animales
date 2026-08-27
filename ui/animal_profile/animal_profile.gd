@@ -18,7 +18,7 @@ var current_animal: AnimalObject
 @onready var health_bar: ProgressBar = $ProfileRoot/Card/Margin/Content/Body/Details/HealthBar
 @onready var hunger_bar: ProgressBar = $ProfileRoot/Card/Margin/Content/Body/Details/HungerBar
 @onready var hygiene_bar: ProgressBar = $ProfileRoot/Card/Margin/Content/Body/Details/HygieneBar
-@onready var happiness_bar: ProgressBar = $ProfileRoot/Card/Margin/Content/Body/Details/HappinessBar
+@onready var energy_bar: ProgressBar = $ProfileRoot/Card/Margin/Content/Body/Details/EnergyBar
 
 
 func _ready() -> void:
@@ -37,7 +37,7 @@ func open_for(animal: AnimalObject) -> void:
 	set_stat(health_bar, animal.salud)
 	set_stat(hunger_bar, animal.hambre)
 	set_stat(hygiene_bar, animal.higiene)
-	set_stat(happiness_bar, animal.felicidad)
+	set_stat(energy_bar, animal.energia)
 	set_portrait(animal)
 	$ProfileRoot.show()
 	get_tree().paused = true
@@ -62,6 +62,22 @@ func _unhandled_input(event: InputEvent) -> void:
 func set_stat(bar: ProgressBar, value: float) -> void:
 	bar.value = value
 	bar.tooltip_text = "%d / 100" % roundi(value)
+	bar.add_theme_stylebox_override("fill", create_stat_fill(value))
+
+
+func create_stat_fill(value: float) -> StyleBoxFlat:
+	var fill := StyleBoxFlat.new()
+	if value < 25.0:
+		fill.bg_color = Color("c84a4a")
+	elif value < 60.0:
+		fill.bg_color = Color("d7a631")
+	else:
+		fill.bg_color = Color("4d9e6e")
+	fill.corner_radius_top_left = 8
+	fill.corner_radius_top_right = 8
+	fill.corner_radius_bottom_right = 8
+	fill.corner_radius_bottom_left = 8
+	return fill
 
 
 func set_portrait(animal: AnimalObject) -> void:
