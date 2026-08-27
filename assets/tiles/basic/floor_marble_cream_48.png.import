@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dleq2eyqrthym"
-path="res://.godot/imported/shelter_surfaces_atlas_48.png-06832399f14f1916e6d6ceec421ba08f.ctex"
+uid="uid://cvnm6bkm35wi7"
+path="res://.godot/imported/floor_marble_cream_48.png-e8492d92e6e345f145d0cc7ed73c8c28.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/shelter/shelter_surfaces_atlas_48.png"
-dest_files=["res://.godot/imported/shelter_surfaces_atlas_48.png-06832399f14f1916e6d6ceec421ba08f.ctex"]
+source_file="res://assets/tiles/basic/floor_marble_cream_48.png"
+dest_files=["res://.godot/imported/floor_marble_cream_48.png-e8492d92e6e345f145d0cc7ed73c8c28.ctex"]
 
 [params]
 

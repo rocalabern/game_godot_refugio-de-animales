@@ -10,6 +10,11 @@ func request_at_cell(room: ShelterRoom, player: PlayerController, cell: Vector2i
 	var object := room.get_interactable_at_cell(cell)
 	if object == null:
 		return false
+	# Las fichas de animales son informativas: se abren directamente al pulsar
+	# cualquier parte visual del animal y nunca generan una ruta para el jugador.
+	if object is AnimalObject:
+		object.interact(player)
+		return true
 	var destination := room.get_interaction_destination(object)
 	if destination == Vector2.INF:
 		return true

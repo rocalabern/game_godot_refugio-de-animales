@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dpkghb17wni2h"
-path="res://.godot/imported/floor_lilac_pastel_48.png-4652ccad126401790f04fd374549f928.ctex"
+uid="uid://b0a8vo5n8sfea"
+path="res://.godot/imported/shelter_entrada_background_v2.png-23cb175ca8cf9a4e4676fd763111b488.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/shelter/floor_lilac_pastel_48.png"
-dest_files=["res://.godot/imported/floor_lilac_pastel_48.png-4652ccad126401790f04fd374549f928.ctex"]
+source_file="res://assets/rooms/shelter_entrada/shelter_entrada_background_v2.png"
+dest_files=["res://.godot/imported/shelter_entrada_background_v2.png-23cb175ca8cf9a4e4676fd763111b488.ctex"]
 
 [params]
 

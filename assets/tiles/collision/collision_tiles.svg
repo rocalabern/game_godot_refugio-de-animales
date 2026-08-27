@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="48" viewBox="0 0 96 48">
+  <!-- Cell (0,0): deliberately empty. Cell (1,0): editor-only blocked cell. -->
+  <rect x="48" y="0" width="48" height="48" fill="#e85d5d" fill-opacity="0.55"/>
+  <rect x="49" y="1" width="46" height="46" fill="none" stroke="#9e2424" stroke-width="2"/>
+  <path d="M54 24H90M72 6V42" stroke="#9e2424" stroke-width="2" opacity="0.75"/>
+</svg>

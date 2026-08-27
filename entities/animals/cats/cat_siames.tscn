@@ -4,8 +4,14 @@
 [ext_resource type="Texture2D" path="res://assets/animals/cats/siamese/cat_siames.png" id="2_texture"]
 
 [node name="CatSiames" instance=ExtResource("1_cat")]
-display_name = "Siamés"
-breed = "Siamés"
+raza = "Siames"
+edad = 3
+nombre = "Siamés"
+pet_name = "Roxy"
+caracteristica_activo = 70.0
+caracteristica_sociable = 75.0
+caracteristica_dependiente = 65.0
+caracteristica_adistramiento = 30.0
 
 [node name="Visual" parent="." index="0"]
 texture = ExtResource("2_texture")

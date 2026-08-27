@@ -1,7 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://game/game_controller.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://rooms/shelter_entrada/shelter_entrada.tscn" id="2_entrance"]
+[ext_resource type="PackedScene" path="res://ui/animal_profile/animal_profile.tscn" id="3_animal_profile"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main")
@@ -10,3 +11,5 @@ initial_room = ExtResource("2_entrance")
 [node name="RoomContainer" type="Node2D" parent="."]
 
 [node name="TransitionAudio" type="AudioStreamPlayer" parent="."]
+
+[node name="AnimalProfile" parent="." instance=ExtResource("3_animal_profile")]

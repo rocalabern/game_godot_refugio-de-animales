@@ -1,0 +1,223 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://ui/animal_profile/animal_profile.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/animals/background_animal.png" id="2_background"]
+
+[sub_resource type="StyleBoxFlat" id="StyleCard"]
+bg_color = Color(0.976471, 0.933333, 0.858824, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.286275, 0.188235, 0.121569, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleClose"]
+bg_color = Color(0.78, 0.28, 0.31, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBarBackground"]
+bg_color = Color(0.35, 0.28, 0.22, 0.2)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBarFill"]
+bg_color = Color(0.30, 0.62, 0.42, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="AnimalProfile" type="CanvasLayer"]
+layer = 10
+process_mode = 3
+script = ExtResource("1_script")
+
+[node name="ProfileRoot" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="Card" type="PanelContainer" parent="ProfileRoot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.05
+anchor_top = 0.08
+anchor_right = 0.95
+anchor_bottom = 0.92
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleCard")
+
+[node name="Margin" type="MarginContainer" parent="ProfileRoot/Card"]
+layout_mode = 2
+theme_override_constants/margin_left = 34
+theme_override_constants/margin_top = 26
+theme_override_constants/margin_right = 34
+theme_override_constants/margin_bottom = 30
+
+[node name="Content" type="VBoxContainer" parent="ProfileRoot/Card/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Header" type="HBoxContainer" parent="ProfileRoot/Card/Margin/Content"]
+layout_mode = 2
+
+[node name="Info" type="VBoxContainer" parent="ProfileRoot/Card/Margin/Content/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="NameLabel" type="Label" parent="ProfileRoot/Card/Margin/Content/Header/Info"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.18, 0.12, 0.08, 1)
+theme_override_font_sizes/font_size = 34
+text = "Animal"
+vertical_alignment = 1
+
+[node name="Description" type="Label" parent="ProfileRoot/Card/Margin/Content/Header/Info"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.07, 0.16, 0.29, 1)
+theme_override_font_sizes/font_size = 22
+autowrap_mode = 2
+text = "Este gato es tranquilo, empático, cariñoso y obediente."
+
+[node name="CloseButton" type="Button" parent="ProfileRoot/Card/Margin/Content/Header"]
+custom_minimum_size = Vector2(78, 68)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 52
+theme_override_styles/normal = SubResource("StyleClose")
+text = "×"
+tooltip_text = "Cerrar"
+
+[node name="Body" type="HBoxContainer" parent="ProfileRoot/Card/Margin/Content"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 34
+
+[node name="PortraitFrame" type="Control" parent="ProfileRoot/Card/Margin/Content/Body"]
+custom_minimum_size = Vector2(176, 352)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="Background" type="TextureRect" parent="ProfileRoot/Card/Margin/Content/Body/PortraitFrame"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_background")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Portrait" type="TextureRect" parent="ProfileRoot/Card/Margin/Content/Body/PortraitFrame"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Details" type="VBoxContainer" parent="ProfileRoot/Card/Margin/Content/Body"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.055, 0.063, 0.08, 1)
+theme_override_constants/separation = 12
+
+[node name="IdentityRow" type="HBoxContainer" parent="ProfileRoot/Card/Margin/Content/Body/Details"]
+layout_mode = 2
+
+[node name="TypeLabel" type="Label" parent="ProfileRoot/Card/Margin/Content/Body/Details/IdentityRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.32, 0.40, 0.48, 1)
+theme_override_font_sizes/font_size = 20
+text = "Tipo: Gato"
+
+[node name="BreedLabel" type="Label" parent="ProfileRoot/Card/Margin/Content/Body/Details/IdentityRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.32, 0.40, 0.48, 1)
+theme_override_font_sizes/font_size = 20
+text = "Raza: Siames"
+
+[node name="AgeLabel" type="Label" parent="ProfileRoot/Card/Margin/Content/Body/Details"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.32, 0.40, 0.48, 1)
+theme_override_font_sizes/font_size = 20
+text = "Edad: 0 años"
+
+[node name="HealthLabel" type="Label" parent="ProfileRoot/Card/Margin/Content/Body/Details"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.32, 0.40, 0.48, 1)
+theme_override_font_sizes/font_size = 20
+text = "Salud"
+
+[node name="HealthBar" type="ProgressBar" parent="ProfileRoot/Card/Margin/Content/Body/Details"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+show_percentage = false
+theme_override_styles/background = SubResource("StyleBarBackground")
+theme_override_styles/fill = SubResource("StyleBarFill")
+value = 100.0
+
+[node name="HungerLabel" type="Label" parent="ProfileRoot/Card/Margin/Content/Body/Details"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.32, 0.40, 0.48, 1)
+theme_override_font_sizes/font_size = 20
+text = "Hambre"
+
+[node name="HungerBar" type="ProgressBar" parent="ProfileRoot/Card/Margin/Content/Body/Details"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+show_percentage = false
+theme_override_styles/background = SubResource("StyleBarBackground")
+theme_override_styles/fill = SubResource("StyleBarFill")
+
+[node name="HygieneLabel" type="Label" parent="ProfileRoot/Card/Margin/Content/Body/Details"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.32, 0.40, 0.48, 1)
+theme_override_font_sizes/font_size = 20
+text = "Higiene"
+
+[node name="HygieneBar" type="ProgressBar" parent="ProfileRoot/Card/Margin/Content/Body/Details"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+show_percentage = false
+theme_override_styles/background = SubResource("StyleBarBackground")
+theme_override_styles/fill = SubResource("StyleBarFill")
+
+[node name="HappinessLabel" type="Label" parent="ProfileRoot/Card/Margin/Content/Body/Details"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.32, 0.40, 0.48, 1)
+theme_override_font_sizes/font_size = 20
+text = "Felicidad"
+
+[node name="HappinessBar" type="ProgressBar" parent="ProfileRoot/Card/Margin/Content/Body/Details"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+show_percentage = false
+theme_override_styles/background = SubResource("StyleBarBackground")
+theme_override_styles/fill = SubResource("StyleBarFill")

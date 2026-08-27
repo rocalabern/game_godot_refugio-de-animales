@@ -6,6 +6,7 @@ const PLAYER_SCENE := preload("res://entities/player/player.tscn")
 const EDITOR_CELL_SIZE := Vector2(48, 48)
 
 signal doorway_requested(doorway: Doorway, player: PlayerController)
+signal animal_interaction_requested(animal: AnimalObject)
 
 @export var room_data: RoomData
 
@@ -142,7 +143,13 @@ func build_runtime_world() -> void:
 
 func get_static_blocked_cells() -> Dictionary:
 	var blocked: Dictionary = {}
-	for layer in find_children("*", "TileMapLayer", false, false):
+	# Las salas con fondo ilustrado completo usan una capa lógica e invisible
+	# llamada CollisionTiles. Las salas antiguas conservan su TileMap visible
+	# hasta que se migren, por lo que mantenemos ese comportamiento como respaldo.
+	var collision_layers := find_children("CollisionTiles", "TileMapLayer", false, false)
+	if collision_layers.is_empty():
+		collision_layers = find_children("*", "TileMapLayer", false, false)
+	for layer in collision_layers:
 		var tile_layer := layer as TileMapLayer
 		if tile_layer == null:
 			continue
@@ -174,11 +181,17 @@ func instantiate_placements() -> void:
 		object.base_cell = placement.base_cell
 		object.configure_grid_size(cell_size)
 		object.position = cell_to_navigation_position(placement.base_cell) + object.get_cell_anchor_offset() * cell_size
+		object.interacted.connect(_on_runtime_object_interacted.bind(object))
 		room_objects.append(object)
 		if object.uses_y_sort:
 			world_y_sort.add_child(object)
 		else:
 			runtime_world.add_child(object)
+
+
+func _on_runtime_object_interacted(_actor: Node2D, object: PlaceableObject) -> void:
+	if object is AnimalObject:
+		animal_interaction_requested.emit(object as AnimalObject)
 
 
 func create_navigation_region() -> void:

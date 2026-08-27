@@ -1,13 +1,12 @@
-[gd_scene format=4]
+[gd_scene format=4 uid="uid://dccrpa6v8fhmr"]
 
-[ext_resource type="Script" path="res://rooms/shared/room_controller.gd" id="1_room"]
-[ext_resource type="Script" path="res://rooms/shared/room_data.gd" id="3_room_data"]
-[ext_resource type="Script" path="res://systems/placement/placed_object_data.gd" id="4_placement"]
+[ext_resource type="Script" uid="uid://q2us5l21kpcu" path="res://rooms/shared/room_controller.gd" id="1_room"]
+[ext_resource type="Script" uid="uid://cw8qiwbk0xw5u" path="res://rooms/shared/room_data.gd" id="3_room_data"]
+[ext_resource type="Script" uid="uid://pbgg7atxku6l" path="res://systems/placement/placed_object_data.gd" id="4_placement"]
 [ext_resource type="PackedScene" path="res://entities/furniture/table/table.tscn" id="5_table"]
-[ext_resource type="TileSet" path="res://assets/tiles/shelter/shelter_tileset.tres" id="6_4oxjw"]
+[ext_resource type="TileSet" uid="uid://bms2704ipohdo" path="res://assets/tiles/basic/shelter_tileset.tres" id="6_4oxjw"]
 [ext_resource type="PackedScene" path="res://entities/furniture/rug/rug.tscn" id="6_rug"]
 [ext_resource type="PackedScene" path="res://systems/transitions/doorway.tscn" id="7_doorway"]
-[ext_resource type="Script" path="res://systems/transitions/doorway.gd" id="8_80j33"]
 
 [sub_resource type="Resource" id="PlacedRug"]
 script = ExtResource("4_placement")
@@ -35,7 +34,7 @@ tile_map_data = PackedByteArray("AAAAAAEAAAABAAAAAAAAAAIAAAABAAAAAAAAAAMAAAABAAA
 tile_set = ExtResource("6_4oxjw")
 
 [node name="WallTiles" type="TileMapLayer" parent="." unique_id=1756317227]
-tile_map_data = PackedByteArray("AAAAAAEAAAACAAAAAAAAAAIAAAACAAAAAAABAAEAAAACAAAAAAABAAIAAAACAAAAAAACAAEAAAACAAAAAAACAAIAAAACAAAAAAADAAEAAAACAAAAAAADAAIAAAACAAAAAAAEAAEAAAACAAAAAAAEAAIAAAACAAAAAAAFAAEAAAACAAAAAAAFAAIAAAACAAAAAAAGAAEAAAACAAAAAAAGAAIAAAACAAAAAAAHAAEAAAACAAAAAAAHAAIAAAACAAAAAAAIAAEAAAACAAAAAAAIAAIAAAACAAAAAAAJAAEAAAACAAAAAAAJAAIAAAACAAAAAAAKAAEAAAACAAAAAAAKAAIAAAACAAAAAAALAAEAAAACAAAAAAALAAIAAAACAAAAAAAMAAEAAAACAAAAAAAMAAIAAAACAAAAAAANAAEAAAACAAAAAAANAAIAAAACAAAAAAAOAAEAAAACAAAAAAAOAAIAAAACAAAAAAAPAAEAAAACAAAAAAAPAAIAAAACAAAAAAAQAAEAAAACAAAAAAAQAAIAAAACAAAAAAARAAEAAAACAAAAAAARAAIAAAACAAAAAAASAAEAAAACAAAAAAASAAIAAAACAAAAAAATAAEAAAACAAAAAAATAAIAAAACAAAAAAA=")
+tile_map_data = PackedByteArray("AAAAAAEAAAACAAAAAAABAAEAAAACAAAAAAACAAEAAAACAAAAAAADAAEAAAACAAAAAAAEAAEAAAACAAAAAAAFAAEAAAACAAAAAAAGAAEAAAACAAAAAAAHAAEAAAACAAAAAAAIAAEAAAACAAAAAAAJAAEAAAACAAAAAAAKAAEAAAACAAAAAAALAAEAAAACAAAAAAAMAAEAAAACAAAAAAANAAEAAAACAAAAAAAOAAEAAAACAAAAAAAPAAEAAAACAAAAAAAQAAEAAAACAAAAAAARAAEAAAACAAAAAAASAAEAAAACAAAAAAATAAEAAAACAAAAAAAAAAwAAAACAAAAAAAAAAsAAAACAAAAAAAAAAoAAAACAAAAAAAAAAkAAAACAAAAAAAAAAgAAAACAAAAAAAAAAcAAAACAAAAAAAAAAYAAAACAAAAAAAAAAUAAAACAAAAAAAAAAQAAAACAAAAAAAAAAMAAAACAAAAAAAAAAIAAAACAAAAAAAEAAwAAAACAAAAAAAFAAwAAAACAAAAAAAGAAwAAAACAAAAAAAHAAwAAAACAAAAAAAIAAwAAAACAAAAAAAJAAwAAAACAAAAAAAKAAwAAAACAAAAAAALAAwAAAACAAAAAAAMAAwAAAACAAAAAAANAAwAAAACAAAAAAAOAAwAAAACAAAAAAAPAAwAAAACAAAAAAAQAAwAAAACAAAAAAARAAwAAAACAAAAAAASAAwAAAACAAAAAAATAAwAAAACAAAAAAATAAsAAAACAAAAAAATAAkAAAACAAAAAAATAAgAAAACAAAAAAATAAcAAAACAAAAAAATAAoAAAACAAAAAAATAAIAAAACAAAAAAATAAMAAAACAAAAAAATAAQAAAACAAAAAAATAAUAAAACAAAAAAATAAYAAAACAAAAAAA=")
 tile_set = ExtResource("6_4oxjw")
 
 [node name="ForegroundTiles" type="TileMapLayer" parent="." unique_id=1160491812]
@@ -47,10 +46,8 @@ tile_set = ExtResource("6_4oxjw")
 [node name="from_shelter_entrada" type="Marker2D" parent="SpawnPoints" unique_id=1737589459]
 position = Vector2(123, 551)
 
-[node name="SouthToEntrance" type="Area2D" parent="." unique_id=2080105482 instance=ExtResource("7_doorway")]
+[node name="SouthToEntrance" parent="." unique_id=2080105482 instance=ExtResource("7_doorway")]
 position = Vector2(120, 600)
-collision_layer = 0
-script = ExtResource("8_80j33")
 destination_scene_path = "res://rooms/shelter_entrada/shelter_entrada.tscn"
 destination_spawn_id = &"from_shelter_dogs"
 grid_cell = Vector2i(1, 12)

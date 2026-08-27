@@ -4,7 +4,6 @@ extends AnimalObject
 signal selected(cat: Cat)
 
 ## Lógica específica común para todos los gatos del refugio.
-@export var breed := "Gato común"
 @export var cell_size := Vector2(48, 48):
 	set(value):
 		cell_size = value

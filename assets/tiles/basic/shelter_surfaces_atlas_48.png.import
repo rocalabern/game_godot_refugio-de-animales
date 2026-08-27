@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cih4l5munjn70"
-path="res://.godot/imported/wall_brown_soft_48.png-027512dfc1875b73d076a70a92fe4fe9.ctex"
+uid="uid://dleq2eyqrthym"
+path="res://.godot/imported/shelter_surfaces_atlas_48.png-288ee50bb488e4923845b9002a451271.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/shelter/wall_brown_soft_48.png"
-dest_files=["res://.godot/imported/wall_brown_soft_48.png-027512dfc1875b73d076a70a92fe4fe9.ctex"]
+source_file="res://assets/tiles/basic/shelter_surfaces_atlas_48.png"
+dest_files=["res://.godot/imported/shelter_surfaces_atlas_48.png-288ee50bb488e4923845b9002a451271.ctex"]
 
 [params]
 

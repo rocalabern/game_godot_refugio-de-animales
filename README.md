@@ -39,6 +39,17 @@ Los muebles heredan directamente de `PlaceableObject`. Cada tipo declara las
 casillas visuales, las que bloquea y las de interacción. Por ejemplo: un gato se
 ve en 1 x 2 pero bloquea únicamente su base; una alfombra no bloquea nada.
 
+## Datos y ficha de animales
+
+`AnimalObject` centraliza los datos editables de cualquier animal: `tipo`,
+`raza`, `edad`, `nombre`, `pet_name`, salud, hambre, higiene, felicidad y sus cuatro
+características de personalidad. Al pulsar un animal, se abre directamente una
+ficha modal que pausa el juego, sin mover al personaje.
+La ficha muestra la identidad,
+necesidades y una frase generada a partir de activo, sociable, dependiente y
+adistramiento. Se cierra con la X grande o con `Esc`. Las bandas concretas de
+cada característica están documentadas en `docs/architecture.md`.
+
 ## Añadir un objeto a una sala
 
 1. Crea una escena que herede de `PlaceableObject` o `AnimalObject`.

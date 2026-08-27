@@ -17,6 +17,7 @@ var current_room: ShelterRoom
 var interaction_controller := InteractionController.new()
 
 @onready var room_container: Node2D = $RoomContainer
+@onready var animal_profile: CanvasLayer = $AnimalProfile
 
 
 func _ready() -> void:
@@ -36,6 +37,7 @@ func load_room(room_scene: PackedScene, spawn_id: StringName, fallback_cell: Vec
 	room_container.add_child(current_room)
 	current_room.configure(cell_size, room_columns, room_rows, room_top_row, show_grid)
 	current_room.doorway_requested.connect(_on_doorway_requested)
+	current_room.animal_interaction_requested.connect(_on_animal_interaction_requested)
 	var spawn_position := current_room.get_spawn_position(spawn_id, fallback_cell) if not spawn_id.is_empty() else current_room.cell_to_navigation_position(fallback_cell)
 	if player == null:
 		player = current_room.create_player(spawn_position)
@@ -74,6 +76,11 @@ func _on_doorway_requested(doorway: Doorway, doorway_player: PlayerController) -
 		push_error("No se pudo cargar el destino de la puerta: %s" % doorway.destination_scene_path)
 		return
 	load_room(destination_scene, doorway.destination_spawn_id, initial_spawn_cell)
+
+
+func _on_animal_interaction_requested(animal: AnimalObject) -> void:
+	if animal_profile != null:
+		animal_profile.call(&"open_for", animal)
 
 
 func _draw() -> void:
