@@ -1,7 +1,7 @@
 extends SceneTree
 
-const SOURCE := "res://assets/tiles/refugio_entrada/refugio_entrada_background.png"
-const OUTPUT := "res://assets/tiles/refugio_entrada/refugio_entrada_background_48.png"
+const SOURCE := "res://assets/rooms/shelter_entrada/shelter_entrada_background_v3.png"
+const OUTPUT := "res://assets/rooms/shelter_entrada/shelter_entrada_background_48.png"
 const ROOM_SIZE := Vector2i(21 * 48, 13 * 48)
 
 func _init() -> void:
