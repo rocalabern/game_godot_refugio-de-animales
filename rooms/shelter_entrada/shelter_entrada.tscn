@@ -5,16 +5,9 @@
 [ext_resource type="Script" uid="uid://pbgg7atxku6l" path="res://systems/placement/placed_object_data.gd" id="4_placement"]
 [ext_resource type="PackedScene" path="res://entities/animals/cats/cat_siames.tscn" id="5_cat"]
 [ext_resource type="PackedScene" path="res://entities/furniture/table/table.tscn" id="6_table"]
-[ext_resource type="PackedScene" path="res://entities/furniture/rug/rug.tscn" id="7_rug"]
 [ext_resource type="PackedScene" path="res://systems/transitions/doorway.tscn" id="8_doorway"]
 [ext_resource type="Texture2D" uid="uid://b6av1ttdrgc8m" path="res://assets/rooms/shelter_entrada/shelter_entrada_background_48.png" id="9_background"]
 [ext_resource type="PackedScene" uid="uid://ci05g228u1f0c" path="res://rooms/shelter_entrada/shelter_entrada_collisions.tscn" id="10_collisions"]
-
-[sub_resource type="Resource" id="PlacedRug"]
-script = ExtResource("4_placement")
-id = "Rug_Entrance"
-scene = ExtResource("7_rug")
-base_cell = Vector2i(2, 8)
 
 [sub_resource type="Resource" id="PlacedTable"]
 script = ExtResource("4_placement")
@@ -31,7 +24,7 @@ base_cell = Vector2i(5, 8)
 [sub_resource type="Resource" id="RoomData_entrada"]
 script = ExtResource("3_room_data")
 room_id = "shelter_entrada"
-placements = Array[ExtResource("4_placement")]([SubResource("PlacedRug"), SubResource("PlacedTable"), SubResource("PlacedCat")])
+placements = Array[ExtResource("4_placement")]([SubResource("PlacedTable"), SubResource("PlacedCat")])
 
 [node name="ShelterEntrada" type="Node2D" unique_id=803844857]
 script = ExtResource("1_room")
