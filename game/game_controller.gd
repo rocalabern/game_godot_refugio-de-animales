@@ -21,6 +21,8 @@ var drag_pointer_offset := Vector2.ZERO
 # Estado de edición de esta partida. Las escenas se vuelven a instanciar al
 # cambiar de habitación, así que no deben ser la fuente de verdad en runtime.
 var room_table_positions: Dictionary = {}
+var animal_states: Dictionary = {}
+var random := RandomNumberGenerator.new()
 
 @onready var room_container: Node2D = $RoomContainer
 @onready var animal_profile: CanvasLayer = $AnimalProfile
@@ -30,6 +32,7 @@ var room_table_positions: Dictionary = {}
 
 
 func _ready() -> void:
+	random.randomize()
 	menu_toggle.pressed.connect(toggle_menu)
 	edit_button.pressed.connect(start_edit_mode)
 	set_menu_open(false)
@@ -41,6 +44,7 @@ func _ready() -> void:
 
 func load_room(room_scene: PackedScene, spawn_id: StringName, fallback_cell: Vector2i) -> void:
 	if current_room != null and player != null:
+		current_room.store_animal_states(animal_states)
 		current_room.detach_player(player)
 	for child in room_container.get_children():
 		child.queue_free()
@@ -48,6 +52,7 @@ func load_room(room_scene: PackedScene, spawn_id: StringName, fallback_cell: Vec
 	room_container.add_child(current_room)
 	current_room.configure(cell_size, room_columns, room_rows, room_top_row, show_grid)
 	current_room.apply_table_position_overrides(room_table_positions.get(current_room.get_room_id(), {}))
+	current_room.initialize_or_restore_animal_states(animal_states, random)
 	current_room.doorway_requested.connect(_on_doorway_requested)
 	current_room.animal_interaction_requested.connect(_on_animal_interaction_requested)
 	var spawn_position := current_room.get_spawn_position(spawn_id, fallback_cell) if not spawn_id.is_empty() else current_room.cell_to_navigation_position(fallback_cell)

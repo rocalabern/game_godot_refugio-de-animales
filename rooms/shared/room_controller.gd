@@ -175,6 +175,33 @@ func apply_table_position_overrides(overrides: Dictionary) -> void:
 		move_table_to_cell(table, target_cell)
 
 
+func initialize_or_restore_animal_states(states: Dictionary, random: RandomNumberGenerator) -> void:
+	for animal in get_animals():
+		var state_key := get_animal_state_key(animal)
+		if states.has(state_key):
+			animal.apply_runtime_state(states[state_key] as Dictionary)
+		else:
+			animal.initialize_runtime_state(random)
+			states[state_key] = animal.get_runtime_state()
+
+
+func store_animal_states(states: Dictionary) -> void:
+	for animal in get_animals():
+		states[get_animal_state_key(animal)] = animal.get_runtime_state()
+
+
+func get_animals() -> Array[AnimalObject]:
+	var animals: Array[AnimalObject] = []
+	for object in room_objects:
+		if object is AnimalObject:
+			animals.append(object as AnimalObject)
+	return animals
+
+
+func get_animal_state_key(animal: AnimalObject) -> String:
+	return "%s/%s" % [get_room_id(), animal.name]
+
+
 func reset_table_position(table: Table) -> void:
 	table.position = cell_to_navigation_position(table.base_cell) + table.get_cell_anchor_offset() * cell_size
 

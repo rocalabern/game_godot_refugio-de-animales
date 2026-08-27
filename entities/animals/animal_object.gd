@@ -39,17 +39,52 @@ func clean() -> void:
 
 
 func receive_care(amount := 15.0) -> void:
-	# La primera acción de cuidado es deliberadamente simple: mejora todas las
-	# necesidades visibles y deja espacio para que cada especie la especialice.
-	salud = minf(100.0, salud + amount)
-	hambre = minf(100.0, hambre + amount)
-	higiene = minf(100.0, higiene + amount)
-	energia = minf(100.0, energia + amount)
+	# Acariciar es una acción afectiva: no sustituye comer, limpiar o descansar.
 	felicidad = minf(100.0, felicidad + amount)
 
 
+func initialize_runtime_state(random: RandomNumberGenerator) -> void:
+	# Cada animal recibe sus valores una única vez al entrar por primera vez en
+	# la partida. Después se conserva su ficha de estado en GameController.
+	salud = random.randi_range(0, 100)
+	hambre = random.randi_range(0, 100)
+	higiene = random.randi_range(0, 100)
+	energia = random.randi_range(0, 100)
+	felicidad = 15.0
+	caracteristica_activo = random.randi_range(0, 100)
+	caracteristica_sociable = random.randi_range(0, 100)
+	caracteristica_dependiente = random.randi_range(0, 100)
+	caracteristica_adistramiento = random.randi_range(0, 100)
+
+
+func get_runtime_state() -> Dictionary:
+	return {
+		"salud": salud,
+		"hambre": hambre,
+		"higiene": higiene,
+		"energia": energia,
+		"felicidad": felicidad,
+		"caracteristica_activo": caracteristica_activo,
+		"caracteristica_sociable": caracteristica_sociable,
+		"caracteristica_dependiente": caracteristica_dependiente,
+		"caracteristica_adistramiento": caracteristica_adistramiento,
+	}
+
+
+func apply_runtime_state(state: Dictionary) -> void:
+	salud = float(state.get("salud", salud))
+	hambre = float(state.get("hambre", hambre))
+	higiene = float(state.get("higiene", higiene))
+	energia = float(state.get("energia", energia))
+	felicidad = float(state.get("felicidad", felicidad))
+	caracteristica_activo = float(state.get("caracteristica_activo", caracteristica_activo))
+	caracteristica_sociable = float(state.get("caracteristica_sociable", caracteristica_sociable))
+	caracteristica_dependiente = float(state.get("caracteristica_dependiente", caracteristica_dependiente))
+	caracteristica_adistramiento = float(state.get("caracteristica_adistramiento", caracteristica_adistramiento))
+
+
 func get_personality_description() -> String:
-	return "Este %s es %s, %s, %s y %s." % [
+	return "Este %s es %s %s %s %s." % [
 		get_tipo_en_espanol(),
 		get_active_label(),
 		get_sociable_label(),
@@ -73,38 +108,38 @@ func get_tipo_display_name() -> String:
 
 func get_active_label() -> String:
 	if caracteristica_activo < 20.0:
-		return "muy tranquilo"
+		return "muy tranquilo, "
 	if caracteristica_activo <= 40.0:
-		return "tranquilo"
+		return "tranquilo, "
 	if caracteristica_activo < 60.0:
-		return "equilibrado"
+		return ""
 	if caracteristica_activo <= 80.0:
-		return "nervioso"
-	return "muy nervioso"
+		return "nervioso, "
+	return "muy nervioso, "
 
 
 func get_sociable_label() -> String:
 	if caracteristica_sociable < 20.0:
-		return "muy poco empático"
+		return "muy poco empático, "
 	if caracteristica_sociable <= 40.0:
-		return "poco empático"
+		return "poco empático, "
 	if caracteristica_sociable < 60.0:
-		return "equilibrado"
+		return ""
 	if caracteristica_sociable <= 80.0:
-		return "empático"
-	return "muy empático"
+		return "empático, "
+	return "muy empático, "
 
 
 func get_dependiente_label() -> String:
 	if caracteristica_dependiente < 20.0:
-		return "muy independiente"
+		return "muy independiente, "
 	if caracteristica_dependiente <= 40.0:
-		return "independiente"
+		return "independiente, "
 	if caracteristica_dependiente < 60.0:
-		return "equilibrado"
+		return ""
 	if caracteristica_dependiente <= 80.0:
-		return "cariñoso"
-	return "muy cariñoso"
+		return "cariñoso, "
+	return "muy cariñoso, "
 
 
 func get_adistramiento_label() -> String:

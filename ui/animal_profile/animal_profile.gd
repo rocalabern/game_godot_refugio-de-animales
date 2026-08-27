@@ -19,6 +19,7 @@ var current_animal: AnimalObject
 @onready var hunger_bar: ProgressBar = $ProfileRoot/Card/Margin/Content/Body/Details/HungerBar
 @onready var hygiene_bar: ProgressBar = $ProfileRoot/Card/Margin/Content/Body/Details/HygieneBar
 @onready var energy_bar: ProgressBar = $ProfileRoot/Card/Margin/Content/Body/Details/EnergyBar
+@onready var happiness_bar: ProgressBar = $ProfileRoot/Card/Margin/Content/Body/Details/HappinessBar
 
 
 func _ready() -> void:
@@ -38,6 +39,7 @@ func open_for(animal: AnimalObject) -> void:
 	set_stat(hunger_bar, animal.hambre)
 	set_stat(hygiene_bar, animal.higiene)
 	set_stat(energy_bar, animal.energia)
+	set_stat(happiness_bar, animal.felicidad)
 	set_portrait(animal)
 	$ProfileRoot.show()
 	get_tree().paused = true
