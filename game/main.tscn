@@ -1,8 +1,34 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://game/game_controller.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://rooms/shelter_entrada/shelter_entrada.tscn" id="2_entrance"]
 [ext_resource type="PackedScene" path="res://ui/animal_profile/animal_profile.tscn" id="3_animal_profile"]
+
+[sub_resource type="StyleBoxFlat" id="StyleMenuButton"]
+bg_color = Color(0.12, 0.25, 0.36, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleMenuButtonHover"]
+bg_color = Color(0.20, 0.38, 0.52, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleMenuPanel"]
+bg_color = Color(0.12, 0.25, 0.36, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.34, 0.50, 0.61, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main")
@@ -13,3 +39,42 @@ initial_room = ExtResource("2_entrance")
 [node name="TransitionAudio" type="AudioStreamPlayer" parent="."]
 
 [node name="AnimalProfile" parent="." instance=ExtResource("3_animal_profile")]
+
+[node name="MenuUI" type="CanvasLayer" parent="."]
+layer = 5
+
+[node name="MenuToggle" type="Button" parent="MenuUI"]
+offset_left = 944.0
+offset_top = 5.0
+offset_right = 992.0
+offset_bottom = 43.0
+theme_override_colors/font_color = Color(0.9, 0.94, 0.96, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleMenuButton")
+theme_override_styles/hover = SubResource("StyleMenuButtonHover")
+theme_override_styles/pressed = SubResource("StyleMenuButtonHover")
+text = "☰"
+tooltip_text = "Abrir menú"
+
+[node name="MenuPanel" type="PanelContainer" parent="MenuUI"]
+visible = false
+offset_left = 744.0
+offset_top = 56.0
+offset_right = 992.0
+offset_bottom = 130.0
+theme_override_styles/panel = SubResource("StyleMenuPanel")
+
+[node name="Margin" type="MarginContainer" parent="MenuUI/MenuPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 12
+
+[node name="Label" type="Label" parent="MenuUI/MenuPanel/Margin"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.94, 0.96, 1)
+theme_override_font_sizes/font_size = 18
+text = "MENÚ DEL REFUGIO"
+horizontal_alignment = 1
+vertical_alignment = 1

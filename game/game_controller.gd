@@ -18,14 +18,17 @@ var interaction_controller := InteractionController.new()
 
 @onready var room_container: Node2D = $RoomContainer
 @onready var animal_profile: CanvasLayer = $AnimalProfile
+@onready var menu_toggle: Button = $MenuUI/MenuToggle
+@onready var menu_panel: PanelContainer = $MenuUI/MenuPanel
 
 
 func _ready() -> void:
+	menu_toggle.pressed.connect(toggle_menu)
+	set_menu_open(false)
 	cell_size = Vector2(get_viewport_rect().size.x / screen_columns, get_viewport_rect().size.y / (room_rows + menu_rows))
 	room_top_row = menu_rows
 	if initial_room != null:
 		load_room(initial_room, &"", initial_spawn_cell)
-	queue_redraw()
 
 
 func load_room(room_scene: PackedScene, spawn_id: StringName, fallback_cell: Vector2i) -> void:
@@ -46,6 +49,10 @@ func load_room(room_scene: PackedScene, spawn_id: StringName, fallback_cell: Vec
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if menu_panel.visible and event.is_action_pressed("ui_cancel"):
+		set_menu_open(false)
+		get_viewport().set_input_as_handled()
+		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		move_player_to(event.position)
 	elif event is InputEventScreenTouch and event.pressed:
@@ -65,6 +72,16 @@ func move_player_to(screen_position: Vector2) -> void:
 		player.move_to(destination)
 
 
+func toggle_menu() -> void:
+	set_menu_open(not menu_panel.visible)
+
+
+func set_menu_open(is_open: bool) -> void:
+	menu_panel.visible = is_open
+	menu_toggle.text = "×" if is_open else "☰"
+	menu_toggle.tooltip_text = "Cerrar menú" if is_open else "Abrir menú"
+
+
 func _on_doorway_requested(doorway: Doorway, doorway_player: PlayerController) -> void:
 	if doorway_player != player or doorway.destination_scene_path.is_empty():
 		return
@@ -81,11 +98,3 @@ func _on_doorway_requested(doorway: Doorway, doorway_player: PlayerController) -
 func _on_animal_interaction_requested(animal: AnimalObject) -> void:
 	if animal_profile != null:
 		animal_profile.call(&"open_for", animal)
-
-
-func _draw() -> void:
-	if cell_size == Vector2.ZERO:
-		return
-	draw_rect(Rect2(Vector2.ZERO, Vector2(get_viewport_rect().size.x, cell_size.y)), Color("25435c"))
-	var room_name := current_room.get_room_id().to_upper() if current_room != null else ""
-	draw_string(ThemeDB.fallback_font, Vector2(16, cell_size.y * 0.62), "REFUGIO · %s   |   Menús" % room_name, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color.WHITE)
