@@ -11,6 +11,8 @@ var cell_size := Vector2(48, 48):
 		_update_collision()
 var navigating := false
 
+var character_texture := preload("res://assets/characters/main_character.png")
+
 @onready var navigation_agent: NavigationAgent2D = $NavigationAgent2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 
@@ -61,6 +63,4 @@ func _update_collision() -> void:
 func _draw() -> void:
 	# El origen permanece en los pies para que Y-Sort pueda comparar al jugador.
 	var body := Rect2(Vector2(-cell_size.x * 0.5, -cell_size.y * 1.5), Vector2(cell_size.x, cell_size.y * 2.0))
-	draw_rect(body, Color("36b7eb"))
-	draw_rect(body, Color.WHITE, false, 3.0)
-	draw_circle(Vector2(0, -cell_size.y * 1.15), cell_size.x * 0.12, Color("103a56"))
+	draw_texture_rect(character_texture, body, false)
