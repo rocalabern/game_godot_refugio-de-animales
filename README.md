@@ -6,6 +6,10 @@ y Godot la escala manteniendo la proporción en PC, tablet y móvil. El personaj
 se ve en 1 x 2, pero solo su base inferior colisiona y decide Y-Sort, navegación
 y transiciones.
 
+![image](docs/img/01_entrada.png)
+
+![image](docs/img/02_cat_card.png)
+
 ## Arquitectura de contenido
 
 Cada sala usa un `RoomData` para sus objetos y tres capas `TileMapLayer` para su
