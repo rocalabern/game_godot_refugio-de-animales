@@ -20,6 +20,7 @@ var world_y_sort: Node2D
 var runtime_world: Node2D
 var occupancy := RoomOccupancy.new()
 var room_objects: Array[PlaceableObject] = []
+var edit_mode := false
 
 
 func _ready() -> void:
@@ -122,6 +123,77 @@ func get_interaction_destination(object: PlaceableObject) -> Vector2:
 		if is_walkable_for_player(candidate):
 			return cell_to_navigation_position(candidate)
 	return Vector2.INF
+
+
+func set_edit_mode(is_active: bool) -> void:
+	edit_mode = is_active
+	for object in room_objects:
+		object.set_edit_mode(is_active)
+
+
+func get_table_at_position(world_position: Vector2) -> Table:
+	for object in room_objects:
+		if not object is Table:
+			continue
+		var table := object as Table
+		var table_rect := Rect2(
+			table.global_position + Vector2(-cell_size.x, -cell_size.y * 2.0),
+			cell_size * 2.0
+		)
+		if table_rect.has_point(world_position):
+			return table
+	return null
+
+
+func get_table_base_cell_from_position(table: Table) -> Vector2i:
+	var base_center := table.global_position - table.get_cell_anchor_offset() * cell_size
+	return Vector2i(
+		roundi(base_center.x / cell_size.x - 0.5),
+		roundi(base_center.y / cell_size.y - 0.5)
+	)
+
+
+func move_table_to_cell(table: Table, target_cell: Vector2i) -> bool:
+	if not can_place_object_at(table, target_cell):
+		return false
+	table.base_cell = target_cell
+	table.position = cell_to_navigation_position(target_cell) + table.get_cell_anchor_offset() * cell_size
+	for placement in room_data.placements:
+		if placement.id == table.name:
+			placement.base_cell = target_cell
+			break
+	rebuild_runtime_navigation()
+	return true
+
+
+func apply_table_position_overrides(overrides: Dictionary) -> void:
+	for object in room_objects:
+		if not object is Table or not overrides.has(object.name):
+			continue
+		var table := object as Table
+		var target_cell := overrides[object.name] as Vector2i
+		move_table_to_cell(table, target_cell)
+
+
+func reset_table_position(table: Table) -> void:
+	table.position = cell_to_navigation_position(table.base_cell) + table.get_cell_anchor_offset() * cell_size
+
+
+func can_place_object_at(object: PlaceableObject, target_cell: Vector2i) -> bool:
+	var static_blocked := get_static_blocked_cells()
+	for local_cell in object.get_navigation_blocking_cells():
+		var cell := target_cell + local_cell
+		if cell.x < 0 or cell.x >= room_columns or cell.y <= room_top_row or cell.y >= room_top_row + room_rows:
+			return false
+		if static_blocked.has(cell):
+			return false
+		for other in room_objects:
+			if other == object:
+				continue
+			for other_local_cell in other.get_navigation_blocking_cells():
+				if other.base_cell + other_local_cell == cell:
+					return false
+	return true
 
 
 func build_runtime_world() -> void:
@@ -228,6 +300,17 @@ func create_generated_collisions() -> void:
 		shape.shape = rectangle
 		body.add_child(shape)
 		collision_root.add_child(body)
+
+
+func rebuild_runtime_navigation() -> void:
+	occupancy.rebuild(get_static_blocked_cells(), room_objects)
+	if is_instance_valid(navigation_region):
+		navigation_region.free()
+	var old_collision_root := runtime_world.get_node_or_null("RoomGeneratedCollisions")
+	if old_collision_root != null:
+		old_collision_root.free()
+	create_navigation_region()
+	create_generated_collisions()
 
 
 func _draw() -> void:

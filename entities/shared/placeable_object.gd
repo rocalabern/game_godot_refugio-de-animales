@@ -18,6 +18,11 @@ func configure_grid_size(_new_cell_size: Vector2) -> void:
 	pass
 
 
+func set_edit_mode(_is_active: bool) -> void:
+	# Las subclases que tengan acciones propias pueden desactivarlas en edición.
+	pass
+
+
 func get_cell_anchor_offset() -> Vector2:
 	# Desplazamiento desde el centro de base. Solo lo cambian objetos cuyo origen
 	# no está en su punto de apoyo, como una alfombra anclada por su esquina.

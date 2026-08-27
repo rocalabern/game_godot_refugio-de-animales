@@ -24,6 +24,7 @@ const CARE_SHAKE_OFFSET := 3.0
 
 var visual_rest_position := Vector2.ZERO
 var care_in_progress := false
+var is_in_edit_mode := false
 
 
 func _ready() -> void:
@@ -74,7 +75,7 @@ func _update_footprint() -> void:
 
 
 func _process(_delta: float) -> void:
-	if Engine.is_editor_hint() or care_in_progress:
+	if Engine.is_editor_hint() or care_in_progress or is_in_edit_mode:
 		return
 	set_hand_visible(is_player_nearby())
 
@@ -104,8 +105,15 @@ func set_hand_visible(is_visible: bool) -> void:
 	hand_action.input_pickable = is_visible
 
 
+func set_edit_mode(is_active: bool) -> void:
+	is_in_edit_mode = is_active
+	interaction_area.input_pickable = not is_active
+	if is_active:
+		set_hand_visible(false)
+
+
 func _on_hand_action_input_event(_viewport: Node, event: InputEvent, _shape_index: int) -> void:
-	if care_in_progress or not hand_action.visible:
+	if is_in_edit_mode or care_in_progress or not hand_action.visible:
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		get_viewport().set_input_as_handled()
