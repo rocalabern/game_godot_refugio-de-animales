@@ -1,6 +1,8 @@
 class_name GameController
 extends Node2D
 
+const ANIMAL_PICKUP_MINIGAME := preload("res://minigames/animal_pickup/animal_pickup_minigame.tscn")
+
 @export_category("Grid")
 @export var screen_columns := 21
 @export var room_columns := 20
@@ -23,18 +25,21 @@ var drag_pointer_offset := Vector2.ZERO
 var room_table_positions: Dictionary = {}
 var animal_states: Dictionary = {}
 var random := RandomNumberGenerator.new()
+var animal_pickup_minigame: AnimalPickupMinigame
 
 @onready var room_container: Node2D = $RoomContainer
 @onready var animal_profile: CanvasLayer = $AnimalProfile
 @onready var menu_toggle: Button = $MenuUI/MenuToggle
 @onready var menu_panel: PanelContainer = $MenuUI/MenuPanel
 @onready var edit_button: Button = $MenuUI/MenuPanel/Margin/Content/EditButton
+@onready var pickup_button: Button = $MenuUI/MenuPanel/Margin/Content/PickupButton
 
 
 func _ready() -> void:
 	random.randomize()
 	menu_toggle.pressed.connect(toggle_menu)
 	edit_button.pressed.connect(start_edit_mode)
+	pickup_button.pressed.connect(open_animal_pickup_minigame)
 	set_menu_open(false)
 	cell_size = Vector2(get_viewport_rect().size.x / screen_columns, get_viewport_rect().size.y / (room_rows + menu_rows))
 	room_top_row = menu_rows
@@ -126,6 +131,24 @@ func stop_edit_mode() -> void:
 	if current_room != null:
 		current_room.set_edit_mode(false)
 	set_menu_open(false)
+
+
+func open_animal_pickup_minigame() -> void:
+	if animal_pickup_minigame != null:
+		return
+	set_menu_open(false)
+	if player != null:
+		player.stop()
+	animal_pickup_minigame = ANIMAL_PICKUP_MINIGAME.instantiate() as AnimalPickupMinigame
+	animal_pickup_minigame.closed.connect(_on_animal_pickup_minigame_closed)
+	add_child(animal_pickup_minigame)
+
+
+func _on_animal_pickup_minigame_closed() -> void:
+	if animal_pickup_minigame == null:
+		return
+	animal_pickup_minigame.queue_free()
+	animal_pickup_minigame = null
 
 
 func handle_edit_input(event: InputEvent) -> void:

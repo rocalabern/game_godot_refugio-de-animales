@@ -64,6 +64,19 @@ Las puertas no están en `RoomData`: son instancias `Doorway` (`Area2D`) que se
 ven y se configuran dentro de la escena. Señalan al `GameController`, que
 conserva al jugador, carga la sala destino y lo sitúa en el `Marker2D` solicitado.
 
+## Minijuego de recogida de animales
+
+`minigames/animal_pickup` es un módulo independiente de salas, navegación,
+animales colocados y personaje. `GameController` instancia su escena como una
+capa modal al seleccionar **Recogida**. La habitación permanece cargada debajo,
+pero el árbol queda pausado y el jugador se detiene; por eso cerrar el minijuego
+restaura de forma natural la misma habitación, posición y estado.
+
+`AnimalPickupMinigame` es dueño de la presentación y de la futura lógica del
+evento de tiempo rápido. Se comunica con el juego principal únicamente mediante
+la señal `closed`; no debe acceder a `ShelterRoom`, `PlayerController` ni a los
+datos internos de `GameController`.
+
 ## Convención de nombres
 
 Los nombres técnicos de archivos, escenas, recursos, nodos e IDs usan

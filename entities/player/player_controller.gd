@@ -10,6 +10,7 @@ var cell_size := Vector2(48, 48):
 		queue_redraw()
 		_update_collision()
 var navigating := false
+var facing_left := false
 
 var character_texture := preload("res://assets/characters/main_character.png")
 
@@ -43,8 +44,19 @@ func _physics_process(_delta: float) -> void:
 
 	var next_position := navigation_agent.get_next_path_position()
 	velocity = global_position.direction_to(next_position) * speed
+	_update_facing_direction()
 	navigation_agent.velocity = velocity
 	move_and_slide()
+
+
+func _update_facing_direction() -> void:
+	if is_zero_approx(velocity.x):
+		return
+	var should_face_left := velocity.x < 0.0
+	if should_face_left == facing_left:
+		return
+	facing_left = should_face_left
+	queue_redraw()
 
 
 func _update_collision() -> void:
@@ -63,4 +75,6 @@ func _update_collision() -> void:
 func _draw() -> void:
 	# El origen permanece en los pies para que Y-Sort pueda comparar al jugador.
 	var body := Rect2(Vector2(-cell_size.x * 0.5, -cell_size.y * 1.5), Vector2(cell_size.x, cell_size.y * 2.0))
+	if facing_left:
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2(-1.0, 1.0))
 	draw_texture_rect(character_texture, body, false)

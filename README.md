@@ -58,6 +58,17 @@ Cuando el personaje se acerca a un animal aparece su lista de acciones. Por
 ahora incluye una mano: pulsarla aplica un cuidado, hace vibrar al animal durante
 tres segundos y aumenta salud, hambre, higiene y energía en 15 puntos.
 
+## Minijuego de recogida de animales
+
+El menú principal incluye la opción **Recogida**, que abre el módulo independiente
+`minigames/animal_pickup`. La escena muestra el fondo específico del minijuego,
+oculta al personaje y pausa la habitación activa. La cruz superior derecha (o
+`Esc`) regresa al refugio exactamente en el estado y posición anteriores.
+
+Este módulo se denomina **minijuego de recogida de animales** (también
+**minijuego de recogida**). Su futura mecánica será un evento de tiempo rápido
+independiente de la navegación y de las habitaciones del refugio.
+
 ## Añadir un objeto a una sala
 
 1. Crea una escena que herede de `PlaceableObject` o `AnimalObject`.

@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" path="res://entities/animals/cats/cat_siames.tscn" id="5_cat"]
 [ext_resource type="PackedScene" path="res://entities/furniture/table/table.tscn" id="6_table"]
 [ext_resource type="PackedScene" path="res://systems/transitions/doorway.tscn" id="8_doorway"]
-[ext_resource type="Texture2D" uid="uid://b6av1ttdrgc8m" path="res://assets/rooms/shelter_entrada/shelter_entrada_background_48.png" id="9_background"]
+[ext_resource type="Texture2D" uid="uid://cfq6o7pgst34f" path="res://assets/rooms/shelter_entrada/shelter_entrada_background_v3.png" id="9_background"]
 [ext_resource type="PackedScene" uid="uid://ci05g228u1f0c" path="res://rooms/shelter_entrada/shelter_entrada_collisions.tscn" id="10_collisions"]
 
 [sub_resource type="Resource" id="PlacedTable"]
@@ -31,7 +31,9 @@ script = ExtResource("1_room")
 room_data = SubResource("RoomData_entrada")
 
 [node name="RoomBackground" type="Sprite2D" parent="." unique_id=408575913]
+texture_filter = 4
 z_index = -10
+scale = Vector2(0.63197494, 0.63286006)
 texture = ExtResource("9_background")
 centered = false
 

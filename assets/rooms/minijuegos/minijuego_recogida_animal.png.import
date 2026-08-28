@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dxlcon0pyvcda"
-path="res://.godot/imported/main_character.png-8132cf19f8025f53382635acacd25ff7.ctex"
+uid="uid://c5bls215lvvjd"
+path="res://.godot/imported/minijuego_recogida_animal.png-fce4e02e4900f5114f020daa77fbd27d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/characters/main_character.png"
-dest_files=["res://.godot/imported/main_character.png-8132cf19f8025f53382635acacd25ff7.ctex"]
+source_file="res://assets/rooms/minijuegos/minijuego_recogida_animal.png"
+dest_files=["res://.godot/imported/minijuego_recogida_animal.png-fce4e02e4900f5114f020daa77fbd27d.ctex"]
 
 [params]
 
