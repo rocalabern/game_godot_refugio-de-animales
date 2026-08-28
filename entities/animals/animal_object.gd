@@ -6,7 +6,7 @@ extends PlaceableObject
 ## estos datos sin necesitar conocer la clase Cat, Dog, Rabbit u Owl.
 @export_category("Identidad")
 @export_enum("Cat", "Dog", "Rabbit", "Owl") var tipo := "Cat"
-@export_enum("Siames") var raza := "Siames"
+@export_enum("Siames", "Beagle", "Pastor alemán", "Husky", "Caniche") var raza := "Siames"
 @export_range(0, 100, 1) var edad: int = 0
 @export var nombre := "Animal"
 @export var pet_name := ""

@@ -85,6 +85,17 @@ func get_navigation_destination(requested_cell: Vector2i) -> Vector2:
 				if is_walkable_for_player(doorway_cell):
 					return cell_to_navigation_position(doorway_cell)
 		return Vector2.INF
+	# Las salidas laterales también pueden ocupar una celda bloqueada del borde.
+	# En ese caso se navega hasta la celda transitable más cercana de su área.
+	for doorway in find_children("*", "Doorway", true, false):
+		if requested_cell.y < doorway.grid_cell.y or requested_cell.y >= doorway.grid_cell.y + doorway.grid_size.y:
+			continue
+		if requested_cell.x < doorway.grid_cell.x or requested_cell.x >= doorway.grid_cell.x + doorway.grid_size.x:
+			continue
+		for x in range(doorway.grid_cell.x + doorway.grid_size.x - 1, doorway.grid_cell.x - 1, -1):
+			var doorway_cell := Vector2i(x, requested_cell.y)
+			if is_walkable_for_player(doorway_cell):
+				return cell_to_navigation_position(doorway_cell)
 	var clamped := Vector2i(clampi(requested_cell.x, 0, room_columns - 1), clampi(requested_cell.y, room_top_row + 1, room_top_row + room_rows - 1))
 	return cell_to_navigation_position(clamped) if is_walkable_for_player(clamped) else Vector2.INF
 
@@ -286,6 +297,30 @@ func instantiate_placements() -> void:
 			world_y_sort.add_child(object)
 		else:
 			runtime_world.add_child(object)
+
+
+func add_runtime_animal(animal_scene: PackedScene, object_id: String, target_cell: Vector2i) -> AnimalObject:
+	if animal_scene == null or not is_walkable_for_player(target_cell):
+		return null
+	var animal := animal_scene.instantiate() as AnimalObject
+	if animal == null:
+		push_error("La escena de rescate debe heredar de AnimalObject.")
+		return null
+	if not can_place_object_at(animal, target_cell):
+		animal.free()
+		return null
+	animal.name = object_id
+	animal.base_cell = target_cell
+	animal.configure_grid_size(cell_size)
+	animal.position = cell_to_navigation_position(target_cell) + animal.get_cell_anchor_offset() * cell_size
+	animal.interacted.connect(_on_runtime_object_interacted.bind(animal))
+	room_objects.append(animal)
+	if animal.uses_y_sort:
+		world_y_sort.add_child(animal)
+	else:
+		runtime_world.add_child(animal)
+	rebuild_runtime_navigation()
+	return animal
 
 
 func _on_runtime_object_interacted(_actor: Node2D, object: PlaceableObject) -> void:

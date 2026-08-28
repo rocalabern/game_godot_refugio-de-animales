@@ -22,6 +22,12 @@ casillas relativas para representarse de otro modo.
 `AnimalObject` añade necesidades comunes. Las clases de especie, como `Cat`, no
 deben ser consultadas por una habitación: se colocan mediante `PlacedObjectData`.
 
+`Dog` aplica a todas las razas de perro el mismo contrato físico e interactivo
+que los gatos: base de una casilla, visual de hasta 1×2 sin deformación, acción
+de acariciar y ficha basada en `AnimalObject`. Las escenas instanciables son
+`beagle.tscn`, `german_sheperd.tscn`, `huskie.tscn` y `poodle.tscn` dentro de
+`entities/animals/dogs`; cada una aporta únicamente identidad y textura.
+
 `AnimalObject` contiene los datos de identidad (`tipo`, `raza`, `edad`,
 `nombre`, `pet_name`), necesidades (`salud`, `hambre`, `higiene`, `felicidad`, `energia`) y las cuatro
 características de personalidad. La ficha modal `AnimalProfile` usa únicamente
@@ -105,6 +111,42 @@ durante `completion_close_delay` y después se usa el mismo flujo de la señal
 El módulo se comunica con el juego principal mediante la señal `closed`; no
 debe acceder a `ShelterRoom`, `PlayerController` ni a los datos internos de
 `GameController`.
+
+## Módulo de mapa
+
+`map` es una capa modal independiente de las habitaciones. `WorldMap` pausa la
+habitación activa, presenta `assets/rooms/map/mapa.png` con su proporción original
+y controla un `MapPlayer` propio mediante coordenadas de pantalla, preparado para
+toques de móvil. Esta primera versión limita el movimiento al rectángulo visible
+del mapa; una futura máscara navegable podrá excluir además sus píxeles
+transparentes sin cambiar el contrato con `GameController`.
+
+Los encuentros son controles temporales reutilizables (`EncounterMarker`). El
+mapa decide cuándo y dónde aparece uno cerca del avatar y emite
+`animal_pickup_requested(environment)` al pulsarlo. `GameController` continúa
+siendo el único responsable de instanciar `AnimalPickupMinigame`; al cerrarlo,
+restaura la pausa del mapa en vez de regresar directamente a la habitación.
+La señal `closed(successful_session)` comunica el resultado final: una victoria
+hace que `GameController` cierre el mapa con destino `shelter_entrada`, mientras
+que un fallo restaura la pausa modal y mantiene la sesión de mapa activa.
+Antes de volver, la victoria registra un perro en `rescued_dogs` con escena de
+raza, nombre, identificador estable y casilla. Al cargar `shelter_entrada`,
+`add_runtime_animal()` lo incorpora al mundo y reconstruye navegación; su estado
+se integra en el mismo diccionario `animal_states` que los animales declarados
+por `RoomData`.
+
+`MapConfig` separa el balance de la escena. Su recurso predeterminado define la
+velocidad del avatar, el margen visual y los rangos de demora, vida y distancia
+de cada encuentro. Hasta que las localizaciones tengan un entorno definido, el
+mapa selecciona aleatoriamente los catálogos `forest` o `city` ya existentes.
+
+La salida lateral `WestToMap` de `shelter_entrada` usa el mismo contrato de
+`Doorway`, con `opens_world_map` para indicar que su destino es modal en vez de
+otra sala. `GameController` conserva la puerta de origen para restablecerla al
+volver. Si se pulsa el edificio del refugio, carga explícitamente
+`shelter_entrada` en el marcador `from_map`; así el personaje reaparece fuera del
+área de transición. `MapConfig` guarda también la posición normalizada de la
+puerta, el hitbox normalizado del edificio y el radio seguro sin encuentros.
 
 ## Convención de nombres
 

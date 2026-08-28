@@ -3,8 +3,8 @@
 Prototipo 2D en Godot: salas de 20 x 12 casillas útiles, con una fila superior
 adicional para el menú. La resolución de diseño es 1008 x 624 (casillas de 48 px)
 y Godot la escala manteniendo la proporción en PC, tablet y móvil. El personaje
-se ve en 1 x 2, pero solo su base inferior colisiona y decide Y-Sort, navegación
-y transiciones.
+ocupa una casilla de ancho y conserva el aspect ratio de su ilustración; solo su
+base inferior colisiona y decide Y-Sort, navegación y transiciones.
 
 ![image](docs/img/01_entrada.png)
 
@@ -35,8 +35,13 @@ gatos, mesas o alfombras.
 ```text
 PlaceableObject
 └── AnimalObject
-    └── Cat
-        └── CatSiames
+    ├── Cat
+    │   └── CatSiames
+    └── Dog
+        ├── DogBeagle
+        ├── DogGermanSheperd
+        ├── DogHuskie
+        └── DogPoodle
 ```
 
 Los muebles heredan directamente de `PlaceableObject`. Cada tipo declara las
@@ -89,6 +94,37 @@ completan la sesión; su valor predeterminado es `3`. Un solo fallo termina la
 sesión inmediatamente. Tras el tercer acierto, `¡Perfecto!` permanece visible
 durante `completion_close_delay` segundos (2 por defecto) antes de regresar al
 refugio. Todavía no se aplican otras consecuencias.
+
+## Mapa
+
+El menú principal incluye **Mapa**, que abre el módulo independiente `map` sobre
+un fondo lila pálido. `assets/rooms/map/mapa.png` se ajusta al mayor tamaño que
+permite la pantalla conservando su proporción. El avatar de exploración es una
+ficha visual distinta al personaje del refugio y se mueve tocando o pulsando un
+punto; su centro queda limitado al rectángulo de la imagen.
+
+La puerta lateral izquierda de la entrada conduce al mapa. El avatar aparece en
+la puerta dibujada del refugio y no se generan encuentros mientras permanece en
+su zona segura. Pulsar el edificio vuelve a cargar la entrada del refugio en el
+punto interior `from_map`.
+
+Periódicamente aparece cerca del avatar una señal roja pulsante durante un tiempo
+aleatorio de 2 a 3 segundos. Pulsarla abre el minijuego de recogida de animales;
+si desaparece, se programa un nuevo encuentro. Cerrar el minijuego devuelve al
+mapa y la cruz del mapa regresa al refugio, conservando su estado.
+
+Si se completan los tres aciertos del minijuego, el mapa también se cierra y el
+personaje vuelve automáticamente a la entrada del refugio. Un fallo cierra solo
+el minijuego y permite continuar explorando el mapa. La futura incorporación del
+animal rescatado utilizará este mismo resultado de victoria.
+
+Cada victoria crea ya un perro rescatado de raza aleatoria entre beagle, pastor
+alemán, husky y caniche. Recibe un nombre escogido de un catálogo y aparece en
+la entrada con ficha, necesidades y acción de acariciar completas. Los rescates
+se conservan al cambiar de habitación durante la partida.
+
+Los parámetros de velocidad, márgenes, intervalos, duración y distancia de los
+encuentros se centralizan en `map/default_map_config.tres`.
 
 ## Añadir un objeto a una sala
 

@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://entities/animals/dogs/dog.tscn" id="1_dog"]
+[ext_resource type="Texture2D" path="res://assets/animals/dogs/german_sheperd/german_sheperd.png" id="2_texture"]
+
+[node name="DogGermanSheperd" instance=ExtResource("1_dog")]
+raza = "Pastor alemán"
+edad = 3
+nombre = "Pastor alemán"
+
+[node name="Visual" parent="." index="0"]
+texture = ExtResource("2_texture")
+

@@ -10,6 +10,7 @@ signal transition_requested(doorway: Doorway, body: Node2D)
 @export_file("*.tscn") var destination_scene_path := ""
 @export var destination_spawn_id: StringName
 @export var transition_sound: AudioStream
+@export var opens_world_map := false
 
 @export_category("Zona en grid")
 @export var grid_cell := Vector2i.ZERO:
@@ -39,6 +40,10 @@ func _ready() -> void:
 func configure_grid_size(new_cell_size: Vector2) -> void:
 	cell_size = new_cell_size
 	_update_shape()
+
+
+func reset_transition() -> void:
+	_transitioning = false
 
 
 func _on_body_entered(body: Node2D) -> void:

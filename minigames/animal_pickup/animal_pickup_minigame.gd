@@ -3,7 +3,7 @@ extends CanvasLayer
 
 ## Minijuego independiente de recogida de animales.
 ## Evalúa un clic cuando el marcador móvil atraviesa la zona válida.
-signal closed
+signal closed(successful_session: bool)
 signal attempt_finished(success: bool)
 
 @export var config: AnimalPickupConfig
@@ -18,6 +18,7 @@ var movement_direction := -1.0
 var random := RandomNumberGenerator.new()
 var current_environment: String
 var current_backdrop: AnimalPickupBackdrop
+var requested_environment := ""
 
 @onready var close_button: Button = $Root/CloseButton
 @onready var root: Control = $Root
@@ -41,7 +42,9 @@ func _ready() -> void:
 
 
 func select_random_backdrop() -> void:
-	current_environment = "forest" if random.randi_range(0, 1) == 0 else "city"
+	current_environment = requested_environment
+	if current_environment != "forest" and current_environment != "city":
+		current_environment = "forest" if random.randi_range(0, 1) == 0 else "city"
 	current_backdrop = backdrops.get_random_backdrop(random, current_environment)
 	if current_backdrop == null:
 		push_error("No hay fondos configurados para el entorno '%s'." % current_environment)
@@ -58,7 +61,7 @@ func _process(delta: float) -> void:
 	result_time_remaining -= delta
 	if result_time_remaining <= 0.0:
 		if close_when_result_time_finishes:
-			close()
+			close(true)
 		else:
 			start_next_attempt()
 
@@ -151,11 +154,11 @@ func is_animal_clicked(root_position: Vector2) -> bool:
 	return current_backdrop.animal_hit_rect.has_point(normalized_position)
 
 
-func close() -> void:
+func close(successful_session := false) -> void:
 	if not is_inside_tree():
 		return
 	get_tree().paused = false
-	closed.emit()
+	closed.emit(successful_session)
 
 
 func _unhandled_input(event: InputEvent) -> void:

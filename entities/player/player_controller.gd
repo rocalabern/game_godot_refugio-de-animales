@@ -12,7 +12,7 @@ var cell_size := Vector2(48, 48):
 var navigating := false
 var facing_left := false
 
-var character_texture := preload("res://assets/characters/main_character.png")
+var character_texture := preload("res://assets/characters/main_character_color.png")
 
 @onready var navigation_agent: NavigationAgent2D = $NavigationAgent2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
@@ -63,18 +63,24 @@ func _update_collision() -> void:
 	if not is_instance_valid(collision_shape):
 		return
 	var shape := RectangleShape2D.new()
-	# El dibujo ocupa dos filas, pero solo la fila inferior es física.
-	# La base física es exactamente una casilla completa. La parte superior del
-	# dibujo puede superponerse visualmente, pero el personaje no puede entrar en
-	# la casilla base de otro ocupante ni colarse por las esquinas.
+	# La base física es exactamente una casilla completa, independientemente de la
+	# altura proporcional del dibujo. La parte superior puede superponerse
+	# visualmente, pero no altera navegación ni colisiones.
 	shape.size = cell_size
 	collision_shape.shape = shape
 	collision_shape.position = Vector2.ZERO
 
 
 func _draw() -> void:
-	# El origen permanece en los pies para que Y-Sort pueda comparar al jugador.
-	var body := Rect2(Vector2(-cell_size.x * 0.5, -cell_size.y * 1.5), Vector2(cell_size.x, cell_size.y * 2.0))
+	# La anchura visual ocupa un tile. La altura conserva la proporción original y
+	# crece hacia arriba, manteniendo los pies en la base de la casilla física.
+	var texture_size := character_texture.get_size()
+	var visual_height := cell_size.x * texture_size.y / texture_size.x
+	var visual_bottom := cell_size.y * 0.5
+	var body := Rect2(
+		Vector2(-cell_size.x * 0.5, visual_bottom - visual_height),
+		Vector2(cell_size.x, visual_height)
+	)
 	if facing_left:
 		draw_set_transform(Vector2.ZERO, 0.0, Vector2(-1.0, 1.0))
 	draw_texture_rect(character_texture, body, false)

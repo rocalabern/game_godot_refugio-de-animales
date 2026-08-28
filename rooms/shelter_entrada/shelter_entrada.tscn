@@ -52,6 +52,9 @@ position = Vector2(216, 167)
 [node name="from_shelter_birds" type="Marker2D" parent="SpawnPoints" unique_id=1169850875]
 position = Vector2(504, 167)
 
+[node name="from_map" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(120, 456)
+
 [node name="NorthToCats" parent="." unique_id=892632646 instance=ExtResource("8_doorway")]
 position = Vector2(261, 81)
 destination_scene_path = "res://rooms/shelter_cats/shelter_cats.tscn"
@@ -75,3 +78,10 @@ destination_spawn_id = &"from_shelter_entrada"
 grid_cell = Vector2i(15, 0)
 grid_size = Vector2i(4, 3)
 allowed_entry_direction = Vector2(0, -1)
+
+[node name="WestToMap" parent="." instance=ExtResource("8_doorway")]
+grid_cell = Vector2i(0, 8)
+grid_size = Vector2i(2, 3)
+allowed_entry_direction = Vector2(-1, 0)
+destination_spawn_id = &"from_map"
+opens_world_map = true

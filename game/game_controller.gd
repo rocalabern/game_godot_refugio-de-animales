@@ -2,6 +2,23 @@ class_name GameController
 extends Node2D
 
 const ANIMAL_PICKUP_MINIGAME := preload("res://minigames/animal_pickup/animal_pickup_minigame.tscn")
+const WORLD_MAP := preload("res://map/map_scene.tscn")
+const SHELTER_ENTRANCE := preload("res://rooms/shelter_entrada/shelter_entrada.tscn")
+const RESCUED_DOG_SCENES: Array[PackedScene] = [
+	preload("res://entities/animals/dogs/beagle.tscn"),
+	preload("res://entities/animals/dogs/german_sheperd.tscn"),
+	preload("res://entities/animals/dogs/huskie.tscn"),
+	preload("res://entities/animals/dogs/poodle.tscn"),
+]
+const DOG_NAMES: Array[String] = [
+	"Luna", "Toby", "Nala", "Max", "Kira", "Bruno", "Milo", "Coco",
+	"Lola", "Rocky", "Bimba", "Leo", "Duna", "Simba", "Noa", "Otto",
+]
+const RESCUED_DOG_CELLS: Array[Vector2i] = [
+	Vector2i(7, 9), Vector2i(8, 9), Vector2i(9, 9), Vector2i(11, 9),
+	Vector2i(12, 9), Vector2i(13, 9), Vector2i(14, 9), Vector2i(15, 9),
+	Vector2i(16, 9), Vector2i(17, 9), Vector2i(7, 11), Vector2i(9, 11),
+]
 
 @export_category("Grid")
 @export var screen_columns := 21
@@ -26,6 +43,10 @@ var room_table_positions: Dictionary = {}
 var animal_states: Dictionary = {}
 var random := RandomNumberGenerator.new()
 var animal_pickup_minigame: AnimalPickupMinigame
+var world_map: WorldMap
+var map_source_doorway: Doorway
+var rescued_dogs: Array[Dictionary] = []
+var next_rescued_dog_id := 1
 
 @onready var room_container: Node2D = $RoomContainer
 @onready var animal_profile: CanvasLayer = $AnimalProfile
@@ -33,6 +54,7 @@ var animal_pickup_minigame: AnimalPickupMinigame
 @onready var menu_panel: PanelContainer = $MenuUI/MenuPanel
 @onready var edit_button: Button = $MenuUI/MenuPanel/Margin/Content/EditButton
 @onready var pickup_button: Button = $MenuUI/MenuPanel/Margin/Content/PickupButton
+@onready var map_button: Button = $MenuUI/MenuPanel/Margin/Content/MapButton
 
 
 func _ready() -> void:
@@ -40,6 +62,7 @@ func _ready() -> void:
 	menu_toggle.pressed.connect(toggle_menu)
 	edit_button.pressed.connect(start_edit_mode)
 	pickup_button.pressed.connect(open_animal_pickup_minigame)
+	map_button.pressed.connect(open_world_map)
 	set_menu_open(false)
 	cell_size = Vector2(get_viewport_rect().size.x / screen_columns, get_viewport_rect().size.y / (room_rows + menu_rows))
 	room_top_row = menu_rows
@@ -58,6 +81,7 @@ func load_room(room_scene: PackedScene, spawn_id: StringName, fallback_cell: Vec
 	current_room.configure(cell_size, room_columns, room_rows, room_top_row, show_grid)
 	current_room.apply_table_position_overrides(room_table_positions.get(current_room.get_room_id(), {}))
 	current_room.initialize_or_restore_animal_states(animal_states, random)
+	_restore_rescued_dogs_in_current_room()
 	current_room.doorway_requested.connect(_on_doorway_requested)
 	current_room.animal_interaction_requested.connect(_on_animal_interaction_requested)
 	var spawn_position := current_room.get_spawn_position(spawn_id, fallback_cell) if not spawn_id.is_empty() else current_room.cell_to_navigation_position(fallback_cell)
@@ -133,22 +157,57 @@ func stop_edit_mode() -> void:
 	set_menu_open(false)
 
 
-func open_animal_pickup_minigame() -> void:
+func open_animal_pickup_minigame(environment := "") -> void:
 	if animal_pickup_minigame != null:
 		return
 	set_menu_open(false)
 	if player != null:
 		player.stop()
 	animal_pickup_minigame = ANIMAL_PICKUP_MINIGAME.instantiate() as AnimalPickupMinigame
+	animal_pickup_minigame.requested_environment = environment
 	animal_pickup_minigame.closed.connect(_on_animal_pickup_minigame_closed)
 	add_child(animal_pickup_minigame)
 
 
-func _on_animal_pickup_minigame_closed() -> void:
+func _on_animal_pickup_minigame_closed(successful_session: bool) -> void:
 	if animal_pickup_minigame == null:
 		return
 	animal_pickup_minigame.queue_free()
 	animal_pickup_minigame = null
+	if successful_session:
+		_register_rescued_dog()
+	if world_map != null:
+		if successful_session:
+			world_map.close(true)
+		else:
+			get_tree().paused = true
+	elif successful_session:
+		_restore_rescued_dogs_in_current_room()
+
+
+func open_world_map() -> void:
+	if world_map != null:
+		return
+	set_menu_open(false)
+	if player != null:
+		player.stop()
+	world_map = WORLD_MAP.instantiate() as WorldMap
+	world_map.closed.connect(_on_world_map_closed)
+	world_map.animal_pickup_requested.connect(open_animal_pickup_minigame)
+	add_child(world_map)
+
+
+func _on_world_map_closed(return_to_shelter: bool) -> void:
+	if world_map == null:
+		return
+	world_map.queue_free()
+	world_map = null
+	if return_to_shelter:
+		load_room(SHELTER_ENTRANCE, &"from_map", initial_spawn_cell)
+	elif map_source_doorway != null and is_instance_valid(map_source_doorway):
+		map_source_doorway.reset_transition()
+		player.position = current_room.get_spawn_position(&"from_map", initial_spawn_cell)
+	map_source_doorway = null
 
 
 func handle_edit_input(event: InputEvent) -> void:
@@ -208,7 +267,13 @@ func remember_table_position(table: Table, base_cell: Vector2i) -> void:
 
 
 func _on_doorway_requested(doorway: Doorway, doorway_player: PlayerController) -> void:
-	if edit_mode or doorway_player != player or doorway.destination_scene_path.is_empty():
+	if edit_mode or doorway_player != player:
+		return
+	if doorway.opens_world_map:
+		map_source_doorway = doorway
+		open_world_map()
+		return
+	if doorway.destination_scene_path.is_empty():
 		return
 	if doorway.transition_sound != null:
 		$TransitionAudio.stream = doorway.transition_sound
@@ -223,3 +288,44 @@ func _on_doorway_requested(doorway: Doorway, doorway_player: PlayerController) -
 func _on_animal_interaction_requested(animal: AnimalObject) -> void:
 	if not edit_mode and animal_profile != null:
 		animal_profile.call(&"open_for", animal)
+
+
+func _register_rescued_dog() -> void:
+	var used_cells: Dictionary = {}
+	for dog_data in rescued_dogs:
+		used_cells[dog_data.get("base_cell", Vector2i.ZERO)] = true
+	var selected_cell := RESCUED_DOG_CELLS[rescued_dogs.size() % RESCUED_DOG_CELLS.size()]
+	for candidate in RESCUED_DOG_CELLS:
+		if not used_cells.has(candidate):
+			selected_cell = candidate
+			break
+	var dog_id := "RescuedDog_%03d" % next_rescued_dog_id
+	next_rescued_dog_id += 1
+	rescued_dogs.append({
+		"id": dog_id,
+		"scene": RESCUED_DOG_SCENES[random.randi_range(0, RESCUED_DOG_SCENES.size() - 1)],
+		"pet_name": DOG_NAMES[random.randi_range(0, DOG_NAMES.size() - 1)],
+		"base_cell": selected_cell,
+	})
+
+
+func _restore_rescued_dogs_in_current_room() -> void:
+	if current_room == null or current_room.get_room_id() != "shelter_entrada":
+		return
+	for dog_data in rescued_dogs:
+		var dog_scene := dog_data.get("scene") as PackedScene
+		var dog_id := String(dog_data.get("id", "RescuedDog"))
+		if current_room.find_child(dog_id, true, false) != null:
+			continue
+		var preferred_cell := dog_data.get("base_cell", Vector2i.ZERO) as Vector2i
+		var dog := current_room.add_runtime_animal(dog_scene, dog_id, preferred_cell)
+		if dog == null:
+			push_warning("No se pudo colocar al perro rescatado '%s' en %s." % [dog_id, preferred_cell])
+			continue
+		dog.pet_name = String(dog_data.get("pet_name", ""))
+		var state_key := current_room.get_animal_state_key(dog)
+		if animal_states.has(state_key):
+			dog.apply_runtime_state(animal_states[state_key] as Dictionary)
+		else:
+			dog.initialize_runtime_state(random)
+			animal_states[state_key] = dog.get_runtime_state()
