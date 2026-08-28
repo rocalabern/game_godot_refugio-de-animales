@@ -72,10 +72,19 @@ capa modal al seleccionar **Recogida**. La habitación permanece cargada debajo,
 pero el árbol queda pausado y el jugador se detiene; por eso cerrar el minijuego
 restaura de forma natural la misma habitación, posición y estado.
 
+`AnimalPickupBackdropCatalog` agrupa diez fondos de bosque y diez de ciudad. Al
+instanciarse, el minijuego elige primero uno de los dos entornos y después una
+entrada de su grupo. Cada `AnimalPickupBackdrop` asocia la textura con
+`animal_hit_rect`, un rectángulo normalizado que identifica la posición real de
+la silueta. El clic se transforma al rectángulo visible de la textura teniendo
+en cuenta su ajuste de aspecto; solo un clic dentro de esa zona inicia la barra.
+Cuando el futuro mapa exterior conozca el entorno, podrá sustituir la elección
+aleatoria sin modificar el catálogo ni las hitboxes.
+
 `AnimalPickupMinigame` es dueño de la presentación y de la futura lógica del
 evento de tiempo rápido. `HitTimingBar` dibuja la barra, la zona válida y el
-marcador. El primer clic muestra la barra y comienza el movimiento; después el
-marcador rebota entre ambos extremos. Al abrir el módulo, la zona válida recibe
+marcador. El clic correcto sobre el animal muestra la barra y comienza el
+movimiento; después el marcador rebota entre ambos extremos. Al abrir el módulo, la zona válida recibe
 una anchura aleatoria entre el 5% y el 35% de la barra. Cada intento se evalúa
 mediante `is_marker_inside_target()`, emite `attempt_finished(success)` y se
 reanuda tras un feedback breve.
@@ -88,9 +97,10 @@ completa en la barra. La escena recibe el recurso mediante su propiedad exportad
 `config`, permitiendo crear variantes de dificultad sin duplicar lógica.
 
 `n_replays_hit_timing_bar` define el número de aciertos necesarios para terminar
-la sesión. `AnimalPickupMinigame` cierra mediante el mismo flujo de la señal
-`closed` al alcanzar ese número o al registrar el primer fallo. Las consecuencias
-de éxito y fallo quedan deliberadamente fuera del módulo por ahora.
+la sesión. Al alcanzarlo, el marcador se detiene, el resultado permanece visible
+durante `completion_close_delay` y después se usa el mismo flujo de la señal
+`closed`. El primer fallo continúa cerrando inmediatamente. Las consecuencias de
+éxito y fallo quedan deliberadamente fuera del módulo por ahora.
 
 El módulo se comunica con el juego principal mediante la señal `closed`; no
 debe acceder a `ShelterRoom`, `PlayerController` ni a los datos internos de

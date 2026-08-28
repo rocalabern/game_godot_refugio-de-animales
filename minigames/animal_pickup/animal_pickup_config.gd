@@ -12,3 +12,4 @@ extends Resource
 @export_category("Intentos")
 @export_range(1, 100, 1) var n_replays_hit_timing_bar := 3
 @export_range(0.1, 3.0, 0.05) var result_display_time := 0.85
+@export_range(0.5, 5.0, 0.1) var completion_close_delay := 2.0

@@ -66,11 +66,16 @@ oculta al personaje y pausa la habitación activa. La cruz superior derecha (o
 `Esc`) regresa al refugio exactamente en el estado y posición anteriores.
 
 Este módulo se denomina **minijuego de recogida de animales** (también
-**minijuego de recogida**). Su mecánica es un evento de precisión temporal: un
-primer clic muestra la barra y un marcador comienza a rebotar entre sus extremos.
+**minijuego de recogida**). Su mecánica es un evento de precisión temporal: al
+encontrar y pulsar el animal aparece la barra y un marcador comienza a rebotar entre sus extremos.
 Hay que pulsar mientras se encuentra dentro de una zona verde cuya anchura se
 elige al abrir entre el 5% y el 35% de la barra. Es independiente de la
 navegación y de las habitaciones del refugio.
+
+Al abrir **Recogida**, mientras no exista un mapa exterior que determine el
+contexto, se selecciona aleatoriamente bosque o ciudad y después uno de sus diez
+fondos. Antes de mostrar la barra hay que encontrar y pulsar la silueta del animal
+en la imagen; los clics fuera de su zona no comienzan el evento de precisión.
 
 Los parámetros de balance se editan desde
 `minigames/animal_pickup/default_animal_pickup_config.tres`: velocidad del
@@ -81,8 +86,9 @@ modificar el código.
 
 La configuración `n_replays_hit_timing_bar` determina cuántos aciertos seguidos
 completan la sesión; su valor predeterminado es `3`. Un solo fallo termina la
-sesión inmediatamente. En ambos casos, por ahora se cierra el minijuego y se
-regresa al refugio sin aplicar otras consecuencias.
+sesión inmediatamente. Tras el tercer acierto, `¡Perfecto!` permanece visible
+durante `completion_close_delay` segundos (2 por defecto) antes de regresar al
+refugio. Todavía no se aplican otras consecuencias.
 
 ## Añadir un objeto a una sala
 

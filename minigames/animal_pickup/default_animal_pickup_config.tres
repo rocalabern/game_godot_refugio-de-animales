@@ -6,4 +6,3 @@
 script = ExtResource("1_config")
 target_width_min = 0.02
 target_width_max = 0.1
-n_replays_hit_timing_bar = 3
