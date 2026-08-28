@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="AnimalPickupConfig" format=3 uid="uid://18clw05of557"]
+
+[ext_resource type="Script" uid="uid://cbrui7e0d8rlh" path="res://minigames/animal_pickup/animal_pickup_config.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+target_width_min = 0.02
+target_width_max = 0.1
+n_replays_hit_timing_bar = 3

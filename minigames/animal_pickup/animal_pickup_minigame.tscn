@@ -1,7 +1,9 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://minigames/animal_pickup/animal_pickup_minigame.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://assets/rooms/minijuegos/minijuego_recogida_animal.png" id="2_background"]
+[ext_resource type="Script" path="res://minigames/animal_pickup/hit_timing_bar.gd" id="3_hit_bar"]
+[ext_resource type="Resource" path="res://minigames/animal_pickup/default_animal_pickup_config.tres" id="4_config"]
 
 [sub_resource type="StyleBoxFlat" id="StyleClose"]
 bg_color = Color(0.12, 0.25, 0.36, 0.92)
@@ -10,10 +12,25 @@ corner_radius_top_right = 22
 corner_radius_bottom_right = 22
 corner_radius_bottom_left = 22
 
+[sub_resource type="StyleBoxFlat" id="StyleHud"]
+bg_color = Color(0.08, 0.16, 0.13, 0.90)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.72, 0.61, 0.40, 0.86)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0, 0, 0, 0.32)
+shadow_size = 8
+
 [node name="AnimalPickupMinigame" type="CanvasLayer"]
 layer = 20
 process_mode = 3
 script = ExtResource("1_script")
+config = ExtResource("4_config")
 
 [node name="Root" type="Control" parent="."]
 layout_mode = 3
@@ -46,6 +63,74 @@ mouse_filter = 2
 texture = ExtResource("2_background")
 expand_mode = 1
 stretch_mode = 5
+
+[node name="StartHint" type="Label" parent="Root"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -210.0
+offset_top = 112.0
+offset_right = 210.0
+offset_bottom = 162.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.941176, 0.760784, 1)
+theme_override_colors/font_shadow_color = Color(0.02, 0.05, 0.03, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 23
+text = "HAZ CLIC PARA COMENZAR"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BottomHud" type="PanelContainer" parent="Root"]
+layout_mode = 1
+anchors_preset = 12
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 84.0
+offset_top = -158.0
+offset_right = -84.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleHud")
+
+[node name="Margin" type="MarginContainer" parent="Root/BottomHud"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 14
+
+[node name="Content" type="VBoxContainer" parent="Root/BottomHud/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="InstructionLabel" type="Label" parent="Root/BottomHud/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.88, 0.68, 1)
+theme_override_font_sizes/font_size = 17
+text = "PULSA CUANDO LA LÍNEA ESTÉ EN LA ZONA VERDE"
+horizontal_alignment = 1
+
+[node name="HitBar" type="Control" parent="Root/BottomHud/Margin/Content"]
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("3_hit_bar")
+
+[node name="FeedbackLabel" type="Label" parent="Root/BottomHud/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.941176, 0.760784, 1)
+theme_override_font_sizes/font_size = 16
+text = "Pulsa en cualquier lugar"
+horizontal_alignment = 1
 
 [node name="CloseButton" type="Button" parent="Root"]
 custom_minimum_size = Vector2(48, 48)

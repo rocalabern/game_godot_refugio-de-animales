@@ -73,9 +73,28 @@ pero el árbol queda pausado y el jugador se detiene; por eso cerrar el minijueg
 restaura de forma natural la misma habitación, posición y estado.
 
 `AnimalPickupMinigame` es dueño de la presentación y de la futura lógica del
-evento de tiempo rápido. Se comunica con el juego principal únicamente mediante
-la señal `closed`; no debe acceder a `ShelterRoom`, `PlayerController` ni a los
-datos internos de `GameController`.
+evento de tiempo rápido. `HitTimingBar` dibuja la barra, la zona válida y el
+marcador. El primer clic muestra la barra y comienza el movimiento; después el
+marcador rebota entre ambos extremos. Al abrir el módulo, la zona válida recibe
+una anchura aleatoria entre el 5% y el 35% de la barra. Cada intento se evalúa
+mediante `is_marker_inside_target()`, emite `attempt_finished(success)` y se
+reanuda tras un feedback breve.
+
+El balance no se codifica en la escena: `AnimalPickupConfig` define su esquema y
+`default_animal_pickup_config.tres` guarda velocidad, anchuras mínima y máxima de
+la zona válida, posición inicial y duración del feedback. El centro se calcula
+aleatoriamente en cada apertura dentro de los límites que mantienen la zona
+completa en la barra. La escena recibe el recurso mediante su propiedad exportada
+`config`, permitiendo crear variantes de dificultad sin duplicar lógica.
+
+`n_replays_hit_timing_bar` define el número de aciertos necesarios para terminar
+la sesión. `AnimalPickupMinigame` cierra mediante el mismo flujo de la señal
+`closed` al alcanzar ese número o al registrar el primer fallo. Las consecuencias
+de éxito y fallo quedan deliberadamente fuera del módulo por ahora.
+
+El módulo se comunica con el juego principal mediante la señal `closed`; no
+debe acceder a `ShelterRoom`, `PlayerController` ni a los datos internos de
+`GameController`.
 
 ## Convención de nombres
 

@@ -66,8 +66,23 @@ oculta al personaje y pausa la habitación activa. La cruz superior derecha (o
 `Esc`) regresa al refugio exactamente en el estado y posición anteriores.
 
 Este módulo se denomina **minijuego de recogida de animales** (también
-**minijuego de recogida**). Su futura mecánica será un evento de tiempo rápido
-independiente de la navegación y de las habitaciones del refugio.
+**minijuego de recogida**). Su mecánica es un evento de precisión temporal: un
+primer clic muestra la barra y un marcador comienza a rebotar entre sus extremos.
+Hay que pulsar mientras se encuentra dentro de una zona verde cuya anchura se
+elige al abrir entre el 5% y el 35% de la barra. Es independiente de la
+navegación y de las habitaciones del refugio.
+
+Los parámetros de balance se editan desde
+`minigames/animal_pickup/default_animal_pickup_config.tres`: velocidad del
+marcador, tamaño mínimo y máximo de la zona, posición inicial y duración del
+feedback. El centro de la zona se elige aleatoriamente en cada apertura. Se
+pueden crear otros recursos `AnimalPickupConfig` para futuras dificultades sin
+modificar el código.
+
+La configuración `n_replays_hit_timing_bar` determina cuántos aciertos seguidos
+completan la sesión; su valor predeterminado es `3`. Un solo fallo termina la
+sesión inmediatamente. En ambos casos, por ahora se cierra el minijuego y se
+regresa al refugio sin aplicar otras consecuencias.
 
 ## Añadir un objeto a una sala
 
