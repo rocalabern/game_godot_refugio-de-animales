@@ -19,14 +19,21 @@ por medio de su contrato.
 de base corresponde al origen del nodo en el suelo; cada subclase puede declarar
 casillas relativas para representarse de otro modo.
 
-`AnimalObject` añade necesidades comunes. Las clases de especie, como `Cat`, no
-deben ser consultadas por una habitación: se colocan mediante `PlacedObjectData`.
+`AnimalObject` añade necesidades comunes. `PettableAnimal` concentra el contrato
+visual, físico e interactivo de los animales que se pueden acariciar. La
+propiedad `visual_columns` determina exclusivamente el ancho; la altura se
+deriva del aspect ratio de la zona opaca del PNG. `base_columns` determina las
+casillas inferiores de colisión y navegación. Todos usan una columna salvo
+husky y pastor alemán, que usan dos. La base también concentra Y-Sort, icono de
+mano y animación de respuesta. Las clases concretas `Cat`, `Dog` y `Bird` solo
+declaran la identidad de especie. Ninguna debe ser consultada por una
+habitación: se colocan mediante `PlacedObjectData` y se consumen como
+`AnimalObject`.
 
-`Dog` aplica a todas las razas de perro el mismo contrato físico e interactivo
-que los gatos: base de una casilla, visual de hasta 1×2 sin deformación, acción
-de acariciar y ficha basada en `AnimalObject`. Las escenas instanciables son
-`beagle.tscn`, `german_sheperd.tscn`, `huskie.tscn` y `poodle.tscn` dentro de
-`entities/animals/dogs`; cada una aporta únicamente identidad y textura.
+Las escenas de raza heredan de la escena de su especie y aportan únicamente
+identidad y textura. Hay cuatro gatos (siamés, bengalí, british shorthair y
+persa), cuatro perros (beagle, pastor alemán, husky y caniche) y cuatro aves
+(periquito verde, periquito blanco, gran búho cornudo y búho chillón).
 
 `AnimalObject` contiene los datos de identidad (`tipo`, `raza`, `edad`,
 `nombre`, `pet_name`), necesidades (`salud`, `hambre`, `higiene`, `felicidad`, `energia`) y las cuatro
@@ -37,8 +44,8 @@ una etiqueta neutral para que la frase siempre tenga un resultado.
 
 ### Reglas de `AnimalObject`
 
-- `tipo`: `Cat`, `Dog`, `Rabbit` u `Owl`.
-- `raza`: actualmente `Siames`.
+- `tipo`: `Cat`, `Dog` o `Bird`.
+- `raza`: uno de los valores registrados para gatos, perros o aves.
 - `edad`, necesidades y características: valores entre 0 y 100.
 - `nombre`: nombre descriptivo del animal.
 - `pet_name`: nombre individual mostrado como título de su ficha; si está vacío,
@@ -129,11 +136,13 @@ restaura la pausa del mapa en vez de regresar directamente a la habitación.
 La señal `closed(successful_session)` comunica el resultado final: una victoria
 hace que `GameController` cierre el mapa con destino `shelter_entrada`, mientras
 que un fallo restaura la pausa modal y mantiene la sesión de mapa activa.
-Antes de volver, la victoria registra un perro en `rescued_dogs` con escena de
-raza, nombre, identificador estable y casilla. Al cargar `shelter_entrada`,
-`add_runtime_animal()` lo incorpora al mundo y reconstruye navegación; su estado
-se integra en el mismo diccionario `animal_states` que los animales declarados
-por `RoomData`.
+Antes de volver, la victoria elige con la misma probabilidad una de las doce
+escenas de gato, perro o ave y registra el resultado en `rescued_animals` con
+nombre, identificador estable, casilla y ancho de base. La reserva comprueba
+todas las casillas de la base para que husky y pastor alemán no se solapen. Al
+cargar `shelter_entrada`, `add_runtime_animal()` lo incorpora al mundo y
+reconstruye navegación; su estado se integra en el mismo diccionario
+`animal_states` que los animales declarados por `RoomData`.
 
 `MapConfig` separa el balance de la escena. Su recurso predeterminado define la
 velocidad del avatar, el margen visual y los rangos de demora, vida y distancia

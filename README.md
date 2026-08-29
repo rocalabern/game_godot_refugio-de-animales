@@ -35,18 +35,33 @@ gatos, mesas o alfombras.
 ```text
 PlaceableObject
 └── AnimalObject
-    ├── Cat
-    │   └── CatSiames
-    └── Dog
-        ├── DogBeagle
-        ├── DogGermanSheperd
-        ├── DogHuskie
-        └── DogPoodle
+    └── PettableAnimal
+        ├── Cat
+        │   ├── CatSiames
+        │   ├── CatBengal
+        │   ├── CatBritishShorthair
+        │   └── CatPersian
+        ├── Dog
+        │   ├── DogBeagle
+        │   ├── DogGermanSheperd
+        │   ├── DogHuskie
+        │   └── DogPoodle
+        └── Bird
+            ├── BirdBudgieGreen
+            ├── BirdBudgieWhite
+            ├── BirdGreatHornedOwl
+            └── BirdScreechOwl
 ```
 
+`PettableAnimal` concentra la física, el escalado sin deformación, la acción de
+acariciar y la interacción compartida. `Cat`, `Dog` y `Bird` son los tres tipos
+concretos; cada raza es una escena heredada que aporta identidad y textura.
+
 Los muebles heredan directamente de `PlaceableObject`. Cada tipo declara las
-casillas visuales, las que bloquea y las de interacción. Por ejemplo: un gato se
-ve en 1 x 2 pero bloquea únicamente su base; una alfombra no bloquea nada.
+casillas visuales, las que bloquea y las de interacción. Los animales conservan
+el aspect ratio y se escalan únicamente por su ancho configurado: todos tienen
+una columna de base salvo el husky y el pastor alemán, que tienen dos. Una
+alfombra, en cambio, no bloquea ninguna casilla.
 
 ## Datos y ficha de animales
 
@@ -118,10 +133,11 @@ personaje vuelve automáticamente a la entrada del refugio. Un fallo cierra solo
 el minijuego y permite continuar explorando el mapa. La futura incorporación del
 animal rescatado utilizará este mismo resultado de victoria.
 
-Cada victoria crea ya un perro rescatado de raza aleatoria entre beagle, pastor
-alemán, husky y caniche. Recibe un nombre escogido de un catálogo y aparece en
-la entrada con ficha, necesidades y acción de acariciar completas. Los rescates
-se conservan al cambiar de habitación durante la partida.
+Cada victoria puede crear cualquiera de los doce animales disponibles: cuatro
+gatos, cuatro perros o cuatro aves. Recibe un nombre escogido de un catálogo y
+aparece en la entrada con ficha, necesidades y acción de acariciar completas.
+Los rescates de base ancha reservan sus dos casillas y todos conservan su estado
+al cambiar de habitación durante la partida.
 
 Los parámetros de velocidad, márgenes, intervalos, duración y distancia de los
 encuentros se centralizan en `map/default_map_config.tres`.

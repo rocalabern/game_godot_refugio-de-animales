@@ -4,10 +4,11 @@
 [ext_resource type="Texture2D" path="res://assets/animals/dogs/huskie/huskie.png" id="2_texture"]
 
 [node name="DogHuskie" instance=ExtResource("1_dog")]
+visual_columns = 2
+base_columns = 2
 raza = "Husky"
 edad = 3
 nombre = "Husky"
 
 [node name="Visual" parent="." index="0"]
 texture = ExtResource("2_texture")
-

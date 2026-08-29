@@ -3,10 +3,10 @@ extends PlaceableObject
 
 ## Plantilla de datos común para todos los animales del refugio.
 ## Las especies concretas amplían comportamiento, pero la ficha se alimenta de
-## estos datos sin necesitar conocer la clase Cat, Dog, Rabbit u Owl.
+## estos datos sin necesitar conocer la clase Cat, Dog o Bird.
 @export_category("Identidad")
-@export_enum("Cat", "Dog", "Rabbit", "Owl") var tipo := "Cat"
-@export_enum("Siames", "Beagle", "Pastor alemán", "Husky", "Caniche") var raza := "Siames"
+@export_enum("Cat", "Dog", "Bird") var tipo := "Cat"
+@export_enum("Siames", "Bengalí", "British Shorthair", "Persa", "Beagle", "Pastor alemán", "Husky", "Caniche", "Periquito verde", "Periquito blanco", "Gran búho cornudo", "Búho chillón") var raza := "Siames"
 @export_range(0, 100, 1) var edad: int = 0
 @export var nombre := "Animal"
 @export var pet_name := ""
@@ -101,8 +101,7 @@ func get_tipo_display_name() -> String:
 	match tipo:
 		"Cat": return "Gato"
 		"Dog": return "Perro"
-		"Rabbit": return "Conejo"
-		"Owl": return "Buho"
+		"Bird": return "Ave"
 		_: return tipo
 
 

@@ -4,17 +4,25 @@ extends Node2D
 const ANIMAL_PICKUP_MINIGAME := preload("res://minigames/animal_pickup/animal_pickup_minigame.tscn")
 const WORLD_MAP := preload("res://map/map_scene.tscn")
 const SHELTER_ENTRANCE := preload("res://rooms/shelter_entrada/shelter_entrada.tscn")
-const RESCUED_DOG_SCENES: Array[PackedScene] = [
+const RESCUABLE_ANIMAL_SCENES: Array[PackedScene] = [
+	preload("res://entities/animals/cats/cat_siames.tscn"),
+	preload("res://entities/animals/cats/bengal.tscn"),
+	preload("res://entities/animals/cats/british_shorthair.tscn"),
+	preload("res://entities/animals/cats/persian.tscn"),
 	preload("res://entities/animals/dogs/beagle.tscn"),
 	preload("res://entities/animals/dogs/german_sheperd.tscn"),
 	preload("res://entities/animals/dogs/huskie.tscn"),
 	preload("res://entities/animals/dogs/poodle.tscn"),
+	preload("res://entities/animals/birds/budgie_green.tscn"),
+	preload("res://entities/animals/birds/budgie_white.tscn"),
+	preload("res://entities/animals/birds/great_horned_owl.tscn"),
+	preload("res://entities/animals/birds/screech_owl.tscn"),
 ]
-const DOG_NAMES: Array[String] = [
+const ANIMAL_NAMES: Array[String] = [
 	"Luna", "Toby", "Nala", "Max", "Kira", "Bruno", "Milo", "Coco",
 	"Lola", "Rocky", "Bimba", "Leo", "Duna", "Simba", "Noa", "Otto",
 ]
-const RESCUED_DOG_CELLS: Array[Vector2i] = [
+const RESCUED_ANIMAL_CELLS: Array[Vector2i] = [
 	Vector2i(7, 9), Vector2i(8, 9), Vector2i(9, 9), Vector2i(11, 9),
 	Vector2i(12, 9), Vector2i(13, 9), Vector2i(14, 9), Vector2i(15, 9),
 	Vector2i(16, 9), Vector2i(17, 9), Vector2i(7, 11), Vector2i(9, 11),
@@ -45,8 +53,8 @@ var random := RandomNumberGenerator.new()
 var animal_pickup_minigame: AnimalPickupMinigame
 var world_map: WorldMap
 var map_source_doorway: Doorway
-var rescued_dogs: Array[Dictionary] = []
-var next_rescued_dog_id := 1
+var rescued_animals: Array[Dictionary] = []
+var next_rescued_animal_id := 1
 
 @onready var room_container: Node2D = $RoomContainer
 @onready var animal_profile: CanvasLayer = $AnimalProfile
@@ -81,7 +89,7 @@ func load_room(room_scene: PackedScene, spawn_id: StringName, fallback_cell: Vec
 	current_room.configure(cell_size, room_columns, room_rows, room_top_row, show_grid)
 	current_room.apply_table_position_overrides(room_table_positions.get(current_room.get_room_id(), {}))
 	current_room.initialize_or_restore_animal_states(animal_states, random)
-	_restore_rescued_dogs_in_current_room()
+	_restore_rescued_animals_in_current_room()
 	current_room.doorway_requested.connect(_on_doorway_requested)
 	current_room.animal_interaction_requested.connect(_on_animal_interaction_requested)
 	var spawn_position := current_room.get_spawn_position(spawn_id, fallback_cell) if not spawn_id.is_empty() else current_room.cell_to_navigation_position(fallback_cell)
@@ -175,14 +183,14 @@ func _on_animal_pickup_minigame_closed(successful_session: bool) -> void:
 	animal_pickup_minigame.queue_free()
 	animal_pickup_minigame = null
 	if successful_session:
-		_register_rescued_dog()
+		_register_rescued_animal()
 	if world_map != null:
 		if successful_session:
 			world_map.close(true)
 		else:
 			get_tree().paused = true
 	elif successful_session:
-		_restore_rescued_dogs_in_current_room()
+		_restore_rescued_animals_in_current_room()
 
 
 func open_world_map() -> void:
@@ -290,42 +298,76 @@ func _on_animal_interaction_requested(animal: AnimalObject) -> void:
 		animal_profile.call(&"open_for", animal)
 
 
-func _register_rescued_dog() -> void:
+func _register_rescued_animal() -> void:
+	var animal_scene := RESCUABLE_ANIMAL_SCENES[random.randi_range(0, RESCUABLE_ANIMAL_SCENES.size() - 1)]
+	var base_columns := _get_animal_base_columns(animal_scene)
 	var used_cells: Dictionary = {}
-	for dog_data in rescued_dogs:
-		used_cells[dog_data.get("base_cell", Vector2i.ZERO)] = true
-	var selected_cell := RESCUED_DOG_CELLS[rescued_dogs.size() % RESCUED_DOG_CELLS.size()]
-	for candidate in RESCUED_DOG_CELLS:
-		if not used_cells.has(candidate):
+	for animal_data in rescued_animals:
+		var occupied_base := animal_data.get("base_cell", Vector2i.ZERO) as Vector2i
+		var occupied_width := int(animal_data.get("base_columns", 1))
+		for x in range(occupied_width):
+			used_cells[occupied_base + Vector2i(x, 0)] = true
+	var selected_cell := Vector2i(-1, -1)
+	for candidate in RESCUED_ANIMAL_CELLS:
+		if _can_reserve_rescue_cell(candidate, base_columns, used_cells, animal_scene):
 			selected_cell = candidate
 			break
-	var dog_id := "RescuedDog_%03d" % next_rescued_dog_id
-	next_rescued_dog_id += 1
-	rescued_dogs.append({
-		"id": dog_id,
-		"scene": RESCUED_DOG_SCENES[random.randi_range(0, RESCUED_DOG_SCENES.size() - 1)],
-		"pet_name": DOG_NAMES[random.randi_range(0, DOG_NAMES.size() - 1)],
+	if selected_cell.x < 0:
+		push_warning("No hay espacio disponible en la entrada para el animal rescatado.")
+		return
+	var animal_id := "RescuedAnimal_%03d" % next_rescued_animal_id
+	next_rescued_animal_id += 1
+	rescued_animals.append({
+		"id": animal_id,
+		"scene": animal_scene,
+		"pet_name": ANIMAL_NAMES[random.randi_range(0, ANIMAL_NAMES.size() - 1)],
 		"base_cell": selected_cell,
+		"base_columns": base_columns,
 	})
 
 
-func _restore_rescued_dogs_in_current_room() -> void:
+func _get_animal_base_columns(animal_scene: PackedScene) -> int:
+	var preview := animal_scene.instantiate() as PettableAnimal
+	if preview == null:
+		return 1
+	var width := preview.base_columns
+	preview.free()
+	return width
+
+
+func _can_reserve_rescue_cell(candidate: Vector2i, base_columns: int, used_cells: Dictionary, animal_scene: PackedScene) -> bool:
+	for x in range(base_columns):
+		var cell := candidate + Vector2i(x, 0)
+		if cell.x < 0 or cell.x >= room_columns or used_cells.has(cell):
+			return false
+	if current_room == null or current_room.get_room_id() != "shelter_entrada":
+		return true
+	var preview := animal_scene.instantiate() as AnimalObject
+	if preview == null:
+		return false
+	preview.configure_grid_size(cell_size)
+	var can_place := current_room.can_place_object_at(preview, candidate)
+	preview.free()
+	return can_place
+
+
+func _restore_rescued_animals_in_current_room() -> void:
 	if current_room == null or current_room.get_room_id() != "shelter_entrada":
 		return
-	for dog_data in rescued_dogs:
-		var dog_scene := dog_data.get("scene") as PackedScene
-		var dog_id := String(dog_data.get("id", "RescuedDog"))
-		if current_room.find_child(dog_id, true, false) != null:
+	for animal_data in rescued_animals:
+		var animal_scene := animal_data.get("scene") as PackedScene
+		var animal_id := String(animal_data.get("id", "RescuedAnimal"))
+		if current_room.find_child(animal_id, true, false) != null:
 			continue
-		var preferred_cell := dog_data.get("base_cell", Vector2i.ZERO) as Vector2i
-		var dog := current_room.add_runtime_animal(dog_scene, dog_id, preferred_cell)
-		if dog == null:
-			push_warning("No se pudo colocar al perro rescatado '%s' en %s." % [dog_id, preferred_cell])
+		var preferred_cell := animal_data.get("base_cell", Vector2i.ZERO) as Vector2i
+		var animal := current_room.add_runtime_animal(animal_scene, animal_id, preferred_cell)
+		if animal == null:
+			push_warning("No se pudo colocar al animal rescatado '%s' en %s." % [animal_id, preferred_cell])
 			continue
-		dog.pet_name = String(dog_data.get("pet_name", ""))
-		var state_key := current_room.get_animal_state_key(dog)
+		animal.pet_name = String(animal_data.get("pet_name", ""))
+		var state_key := current_room.get_animal_state_key(animal)
 		if animal_states.has(state_key):
-			dog.apply_runtime_state(animal_states[state_key] as Dictionary)
+			animal.apply_runtime_state(animal_states[state_key] as Dictionary)
 		else:
-			dog.initialize_runtime_state(random)
-			animal_states[state_key] = dog.get_runtime_state()
+			animal.initialize_runtime_state(random)
+			animal_states[state_key] = animal.get_runtime_state()
