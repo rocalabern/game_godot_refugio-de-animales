@@ -124,7 +124,7 @@ debe acceder a `ShelterRoom`, `PlayerController` ni a los datos internos de
 ## Módulo de mapa
 
 `map` es una capa modal independiente de las habitaciones. `WorldMap` pausa la
-habitación activa, presenta `assets/rooms/map/mapa.png` con su proporción original
+habitación activa, presenta `assets/map/mapa.png` con su proporción original
 y controla un `MapPlayer` propio mediante coordenadas de pantalla, preparado para
 toques de móvil. Esta primera versión limita el movimiento al rectángulo visible
 del mapa; una futura máscara navegable podrá excluir además sus píxeles

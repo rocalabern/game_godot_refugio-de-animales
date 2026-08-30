@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://minigames/cure/cure_minigame.gd" id="1"]
+[ext_resource type="Resource" path="res://minigames/cure/default_cure_minigame_config.tres" id="2_config"]
 
 [sub_resource type="StyleBoxFlat" id="Background"]
 bg_color = Color(0.921, 0.875, 0.721, 1)
@@ -72,6 +73,7 @@ corner_radius_bottom_left = 12
 layer = 20
 process_mode = 3
 script = ExtResource("1")
+config = ExtResource("2_config")
 
 [node name="Root" type="Control" parent="."]
 layout_mode = 3
@@ -144,11 +146,9 @@ theme_override_constants/margin_top = 18
 theme_override_constants/margin_right = 36
 theme_override_constants/margin_bottom = 18
 
-[node name="Board" type="GridContainer" parent="Root/BoardPanel/BoardMargin"]
+[node name="Board" type="Control" parent="Root/BoardPanel/BoardMargin"]
 layout_mode = 2
-theme_override_constants/h_separation = 10
-theme_override_constants/v_separation = 8
-columns = 7
+clip_contents = true
 
 [node name="RoundLabel" type="Label" parent="Root"]
 offset_left = 30.0
@@ -270,4 +270,3 @@ theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("DarkButton")
 theme_override_styles/hover = SubResource("DarkButtonHover")
 text = "Volver"
-

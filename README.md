@@ -116,7 +116,7 @@ refugio. Todavía no se aplican otras consecuencias.
 ## Mapa
 
 El menú principal incluye **Mapa**, que abre el módulo independiente `map` sobre
-un fondo lila pálido. `assets/rooms/map/mapa.png` se ajusta al mayor tamaño que
+un fondo lila pálido. `assets/map/mapa.png` se ajusta al mayor tamaño que
 permite la pantalla conservando su proporción. El avatar de exploración es una
 ficha visual distinta al personaje del refugio y se mueve tocando o pulsando un
 punto; su centro queda limitado al rectángulo de la imagen.

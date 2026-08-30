@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CureMinigameConfig" format=3 uid="uid://x4xxc1tqi5yx"]
+
+[ext_resource type="Script" uid="uid://updqopp2mq2f" path="res://minigames/cure/cure_minigame_config.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+objetos_en_pantalla = 100
+intentos_colocacion = 50
+rotacion_minima_grados = -30.0
+rotacion_maxima_grados = 30.0
+escala_minima = 0.7
+escala_maxima = 0.9

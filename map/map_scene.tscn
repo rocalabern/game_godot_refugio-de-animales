@@ -1,10 +1,10 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene format=3]
 
-[ext_resource type="Script" path="res://map/map_scene.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://assets/rooms/map/mapa.png" id="2_map"]
+[ext_resource type="Script" uid="uid://i27fis5pyf1v" path="res://map/map_scene.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dnlfhvr62ihfa" path="res://assets/map/mapa.png" id="2_map"]
 [ext_resource type="Resource" path="res://map/default_map_config.tres" id="3_config"]
-[ext_resource type="Script" path="res://map/map_player.gd" id="4_player"]
-[ext_resource type="Script" path="res://map/encounter_marker.gd" id="5_marker"]
+[ext_resource type="Script" uid="uid://ov4st1xr6ug" path="res://map/map_player.gd" id="4_player"]
+[ext_resource type="Script" uid="uid://c210w5qpyns6r" path="res://map/encounter_marker.gd" id="5_marker"]
 
 [sub_resource type="StyleBoxFlat" id="StyleClose"]
 bg_color = Color(0.25, 0.22, 0.36, 0.92)
