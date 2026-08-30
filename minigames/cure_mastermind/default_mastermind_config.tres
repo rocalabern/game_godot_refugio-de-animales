@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="MastermindConfig" load_steps=14 format=3]
+
+[ext_resource type="Script" path="res://minigames/cure_mastermind/mastermind_config.gd" id="1_config"]
+[ext_resource type="Script" path="res://minigames/cure_mastermind/mastermind_round_config.gd" id="2_round"]
+[ext_resource type="Texture2D" path="res://assets/minigames/cure_mastermind/capsules/red.png" id="3_red"]
+[ext_resource type="Texture2D" path="res://assets/minigames/cure_mastermind/capsules/yellow.png" id="4_yellow"]
+[ext_resource type="Texture2D" path="res://assets/minigames/cure_mastermind/capsules/blue.png" id="5_blue"]
+[ext_resource type="Texture2D" path="res://assets/minigames/cure_mastermind/capsules/lilac.png" id="6_lilac"]
+[ext_resource type="Texture2D" path="res://assets/minigames/cure_mastermind/capsules/orange.png" id="7_orange"]
+[ext_resource type="Texture2D" path="res://assets/minigames/cure_mastermind/capsules/pink.png" id="8_pink"]
+[ext_resource type="Texture2D" path="res://assets/minigames/cure_mastermind/feedback/golden_bone.png" id="9_gold"]
+[ext_resource type="Texture2D" path="res://assets/minigames/cure_mastermind/feedback/silver_bone.png" id="10_silver"]
+
+[sub_resource type="Resource" id="Round1"]
+script = ExtResource("2_round")
+posiciones = 3
+cantidad_colores = 3
+intentos_maximos = 8
+permitir_colores_repetidos = true
+
+[sub_resource type="Resource" id="Round2"]
+script = ExtResource("2_round")
+posiciones = 5
+cantidad_colores = 4
+intentos_maximos = 10
+permitir_colores_repetidos = true
+
+[sub_resource type="Resource" id="Round3"]
+script = ExtResource("2_round")
+posiciones = 6
+cantidad_colores = 6
+intentos_maximos = 12
+permitir_colores_repetidos = true
+
+[resource]
+script = ExtResource("1_config")
+partidas = Array[ExtResource("2_round")]([SubResource("Round1"), SubResource("Round2"), SubResource("Round3")])
+espera_entre_partidas = 1.6
+capsulas = Array[Texture2D]([ExtResource("3_red"), ExtResource("4_yellow"), ExtResource("5_blue"), ExtResource("6_lilac"), ExtResource("7_orange"), ExtResource("8_pink")])
+hueso_dorado = ExtResource("9_gold")
+hueso_plateado = ExtResource("10_silver")

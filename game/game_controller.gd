@@ -3,6 +3,7 @@ extends Node2D
 
 const ANIMAL_PICKUP_MINIGAME := preload("res://minigames/animal_pickup/animal_pickup_minigame.tscn")
 const CURE_MINIGAME := preload("res://minigames/cure/cure_minigame.tscn")
+const CURE_MASTERMIND_MINIGAME := preload("res://minigames/cure_mastermind/cure_mastermind_minigame.tscn")
 const WORLD_MAP := preload("res://map/map_scene.tscn")
 const SHELTER_ENTRANCE := preload("res://rooms/shelter_entrada/shelter_entrada.tscn")
 const RESCUABLE_ANIMAL_SCENES: Array[PackedScene] = [
@@ -49,6 +50,7 @@ var animal_states: Dictionary = {}
 var random := RandomNumberGenerator.new()
 var animal_pickup_minigame: AnimalPickupMinigame
 var cure_minigame: CureMinigame
+var cure_mastermind_minigame: CureMastermindMinigame
 var world_map: WorldMap
 var map_source_doorway: Doorway
 var rescued_animals: Array[Dictionary] = []
@@ -62,6 +64,7 @@ var next_rescued_animal_id := 1
 @onready var pickup_button: Button = $MenuUI/MenuPanel/Margin/Content/PickupButton
 @onready var map_button: Button = $MenuUI/MenuPanel/Margin/Content/MapButton
 @onready var cure_button: Button = $MenuUI/MenuPanel/Margin/Content/CureButton
+@onready var cure_v2_button: Button = $MenuUI/MenuPanel/Margin/Content/CureV2Button
 
 
 func _ready() -> void:
@@ -71,6 +74,7 @@ func _ready() -> void:
 	pickup_button.pressed.connect(open_animal_pickup_minigame)
 	map_button.pressed.connect(open_world_map)
 	cure_button.pressed.connect(open_cure_minigame)
+	cure_v2_button.pressed.connect(open_cure_mastermind_minigame)
 	set_menu_open(false)
 	cell_size = Vector2(get_viewport_rect().size.x / screen_columns, get_viewport_rect().size.y / (room_rows + menu_rows))
 	room_top_row = menu_rows
@@ -227,6 +231,24 @@ func _on_cure_minigame_closed() -> void:
 		return
 	cure_minigame.queue_free()
 	cure_minigame = null
+
+
+func open_cure_mastermind_minigame() -> void:
+	if cure_mastermind_minigame != null:
+		return
+	set_menu_open(false)
+	if player != null:
+		player.stop()
+	cure_mastermind_minigame = CURE_MASTERMIND_MINIGAME.instantiate() as CureMastermindMinigame
+	cure_mastermind_minigame.closed.connect(_on_cure_mastermind_minigame_closed)
+	add_child(cure_mastermind_minigame)
+
+
+func _on_cure_mastermind_minigame_closed() -> void:
+	if cure_mastermind_minigame == null:
+		return
+	cure_mastermind_minigame.queue_free()
+	cure_mastermind_minigame = null
 
 
 func _on_world_map_closed(return_to_shelter: bool) -> void:
