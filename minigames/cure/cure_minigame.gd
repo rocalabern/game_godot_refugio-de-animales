@@ -38,8 +38,14 @@ func _ready() -> void:
 	if config == null:
 		_show_config_error()
 		return
-	medical_items = _load_png_textures(config.carpeta_medicina)
-	distractor_items = _load_png_textures(config.carpeta_distractores)
+	medical_items = config.imagenes_medicina.duplicate()
+	distractor_items = config.imagenes_distractoras.duplicate()
+	# En el editor se conserva el descubrimiento por carpeta para facilitar
+	# añadir recursos durante desarrollo. El APK usa las referencias explícitas.
+	if medical_items.is_empty() and Engine.is_editor_hint():
+		medical_items = _load_png_textures(config.carpeta_medicina)
+	if distractor_items.is_empty() and Engine.is_editor_hint():
+		distractor_items = _load_png_textures(config.carpeta_distractores)
 	if medical_items.size() < config.partidas_seguidas or distractor_items.is_empty():
 		_show_catalog_error()
 		return

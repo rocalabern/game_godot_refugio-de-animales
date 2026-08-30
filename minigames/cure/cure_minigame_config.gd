@@ -25,3 +25,5 @@ extends Resource
 @export_category("Catálogos")
 @export_dir var carpeta_medicina := "res://assets/minigames/cure/medical"
 @export_dir var carpeta_distractores := "res://assets/minigames/cure/distractors"
+@export var imagenes_medicina: Array[Texture2D] = []
+@export var imagenes_distractoras: Array[Texture2D] = []
