@@ -9,6 +9,7 @@ signal care_requested(animal: PettableAnimal)
 const CARE_DISTANCE_IN_CELLS := 2.0
 const CARE_SHAKE_DURATION := 3.0
 const CARE_SHAKE_OFFSET := 3.0
+const HAND_GAP_IN_CELLS := 0.1
 
 ## Ancho visible y físico medido en casillas. La altura visible se calcula a
 ## partir del aspect ratio de la zona opaca de la textura.
@@ -35,7 +36,7 @@ var base_columns := 1:
 
 var visual_rest_position := Vector2.ZERO
 var visual_rows := 1
-var visual_top_y := -48.0
+var visual_height := 0.0
 var care_in_progress := false
 var is_in_edit_mode := false
 
@@ -105,21 +106,33 @@ func _update_footprint() -> void:
 		visual.centered = false
 		var opaque_width := opaque_size.x * scale_factor
 		var opaque_height := opaque_size.y * scale_factor
+		visual_height = opaque_height
 		visual_rows = maxi(1, ceili(opaque_height / cell_size.y))
 		footprint = Vector2i(visual_columns, visual_rows)
 		var opaque_left := used_rect.position.x * scale_factor
 		var opaque_bottom := (used_rect.position.y + used_rect.size.y) * scale_factor
 		visual.position = Vector2(-opaque_width * 0.5 - opaque_left, cell_size.y * 0.5 - opaque_bottom)
 		visual_rest_position = visual.position
-		visual_top_y = cell_size.y * 0.5 - opaque_height
+		# La ficha se abre pulsando únicamente sobre el rectángulo opaco
+		# renderizado, no sobre toda la casilla de la base.
+		var interaction_shape := RectangleShape2D.new()
+		interaction_shape.size = Vector2(opaque_width, opaque_height)
+		collision_shape.shape = interaction_shape
+		collision_shape.position = Vector2(0.0, cell_size.y * 0.5 - opaque_height * 0.5)
 	else:
 		visual_rows = 1
+		visual_height = cell_size.y
 		footprint = Vector2i(visual_columns, visual_rows)
+		var interaction_shape := RectangleShape2D.new()
+		interaction_shape.size = Vector2(cell_size.x * visual_columns, cell_size.y)
+		collision_shape.shape = interaction_shape
+		collision_shape.position = Vector2.ZERO
 
-	var shape := RectangleShape2D.new()
-	shape.size = Vector2(cell_size.x * base_columns, cell_size.y)
-	collision_shape.shape = shape
-	body_collision_shape.shape = shape
+	# La colisión física sigue representando solo las casillas de la base para
+	# no cambiar la navegación ni el espacio que ocupa el animal en la sala.
+	var body_shape := RectangleShape2D.new()
+	body_shape.size = Vector2(cell_size.x * base_columns, cell_size.y)
+	body_collision_shape.shape = body_shape
 	configure_hand_action()
 
 
@@ -136,9 +149,17 @@ func configure_hand_action() -> void:
 	var source_size := hand_icon.texture.get_size()
 	var scale_factor := minf(hand_size.x / source_size.x, hand_size.y / source_size.y)
 	hand_icon.scale = Vector2.ONE * scale_factor
-	hand_action.position = Vector2(0.0, visual_top_y - cell_size.y * 0.35)
+	# Calculamos la mano desde los límites renderizados del PNG y del área de
+	# selección para mantener ambas Area2D separadas aunque cambie su geometría.
+	var visual_top_y := cell_size.y * 0.5 - visual_height
+	var interaction_rect := collision_shape.shape as RectangleShape2D
+	var interaction_top_y := collision_shape.position.y - interaction_rect.size.y * 0.5
+	var action_top_y := minf(visual_top_y, interaction_top_y)
+	var rendered_hand_size := source_size * scale_factor
+	var hand_gap := cell_size.y * HAND_GAP_IN_CELLS
+	hand_action.position = Vector2(0.0, action_top_y - hand_gap - rendered_hand_size.y * 0.5)
 	var hand_shape := RectangleShape2D.new()
-	hand_shape.size = source_size * scale_factor
+	hand_shape.size = rendered_hand_size
 	hand_collision_shape.shape = hand_shape
 
 
@@ -152,6 +173,16 @@ func set_hand_visible(is_visible: bool) -> void:
 		return
 	hand_action.visible = is_visible
 	hand_action.input_pickable = is_visible
+
+
+func has_visible_hand_at(global_pointer_position: Vector2) -> bool:
+	if not is_instance_valid(hand_action) or not hand_action.visible or care_in_progress or is_in_edit_mode:
+		return false
+	var hand_shape := hand_collision_shape.shape as RectangleShape2D
+	if hand_shape == null:
+		return false
+	var local_pointer_position := hand_action.to_local(global_pointer_position)
+	return Rect2(-hand_shape.size * 0.5, hand_shape.size).has_point(local_pointer_position)
 
 
 func set_edit_mode(is_active: bool) -> void:

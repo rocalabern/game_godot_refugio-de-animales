@@ -128,6 +128,20 @@ func get_interactable_at_cell(cell: Vector2i) -> PlaceableObject:
 	return null
 
 
+func try_care_animal_at_screen_position(screen_position: Vector2) -> bool:
+	# El controlador global resuelve las interacciones por casilla en
+	# _unhandled_input, antes de que Godot haga picking de las Area2D. Por eso la
+	# mano debe tener prioridad aquí para que el clic no se convierta en ficha.
+	var canvas_position := get_viewport().get_canvas_transform().affine_inverse() * screen_position
+	for animal in get_animals():
+		if animal is PettableAnimal:
+			var pettable_animal := animal as PettableAnimal
+			if pettable_animal.has_visible_hand_at(canvas_position):
+				pettable_animal.start_care_action()
+				return true
+	return false
+
+
 func get_interaction_destination(object: PlaceableObject) -> Vector2:
 	for local_cell in object.get_interaction_cells():
 		var candidate := object.base_cell + local_cell

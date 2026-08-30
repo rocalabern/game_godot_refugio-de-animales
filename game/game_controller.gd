@@ -104,8 +104,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		if current_room != null and current_room.try_care_animal_at_screen_position(event.position):
+			get_viewport().set_input_as_handled()
+			return
 		move_player_to(event.position)
 	elif event is InputEventScreenTouch and event.pressed:
+		if current_room != null and current_room.try_care_animal_at_screen_position(event.position):
+			get_viewport().set_input_as_handled()
+			return
 		move_player_to(event.position)
 
 
