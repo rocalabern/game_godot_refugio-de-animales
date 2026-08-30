@@ -1,12 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="PackedScene" path="res://entities/animals/birds/bird.tscn" id="1_bird"]
-[ext_resource type="Texture2D" path="res://assets/animals/birds/budgie_green/budgie_green.png" id="2_texture"]
+[ext_resource type="Resource" path="res://entities/animals/config/breeds/birds/budgie_green.tres" id="2_breed"]
 
 [node name="BirdBudgieGreen" instance=ExtResource("1_bird")]
-raza = "Periquito verde"
-edad = 2
-nombre = "Periquito verde"
-
-[node name="Visual" parent="." index="0"]
-texture = ExtResource("2_texture")
+breed_definition = ExtResource("2_breed")

@@ -1,13 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="PackedScene" path="res://entities/animals/dogs/dog.tscn" id="1_dog"]
-[ext_resource type="Texture2D" path="res://assets/animals/dogs/beagle/beagle.png" id="2_texture"]
+[ext_resource type="Resource" path="res://entities/animals/config/breeds/dogs/beagle.tres" id="2_breed"]
 
 [node name="DogBeagle" instance=ExtResource("1_dog")]
-raza = "Beagle"
-edad = 3
-nombre = "Beagle"
-
-[node name="Visual" parent="." index="0"]
-texture = ExtResource("2_texture")
-
+breed_definition = ExtResource("2_breed")

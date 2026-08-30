@@ -121,3 +121,10 @@ de Git y el estado actual del repositorio.
   las doce escenas de gato, perro o ave.
 - La asignación de casillas de rescate reserva el ancho completo de la base para
   impedir solapamientos.
+- Se creó un `AnimalBreedDefinition` por subraza como fuente de verdad de
+  identidad, textura, edad, dimensiones y catálogo de nombres.
+- Se añadieron cinco recursos `AnimalNamePool` compartidos por gatos, perros
+  pequeños, perros grandes, periquitos y búhos.
+- Los nombres dejaron de estar codificados en `GameController`; tanto animales
+  colocados como rescatados los obtienen desde su definición de subraza y los
+  conservan en el estado de partida.

@@ -55,7 +55,10 @@ PlaceableObject
 
 `PettableAnimal` concentra la física, el escalado sin deformación, la acción de
 acariciar y la interacción compartida. `Cat`, `Dog` y `Bird` son los tres tipos
-concretos; cada raza es una escena heredada que aporta identidad y textura.
+concretos. Cada subraza tiene una escena heredada y un
+`AnimalBreedDefinition` que aporta identidad, textura, dimensiones, edad y
+catálogo de nombres. El sistema se documenta en
+`docs/animals_oop_system.md`.
 
 Los muebles heredan directamente de `PlaceableObject`. Cada tipo declara las
 casillas visuales, las que bloquea y las de interacción. Los animales conservan

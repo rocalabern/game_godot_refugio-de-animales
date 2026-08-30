@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="AnimalNamePool" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://entities/animals/config/animal_name_pool.gd" id="1_pool"]
+
+[resource]
+script = ExtResource("1_pool")
+pool_id = &"dogs_large"
+names = PackedStringArray("Toby", "Kira", "Luna", "Maya", "Max", "Rocky", "Lola", "Zeus", "Bruno", "Nala", "Tyson", "Layca", "Loki", "Thor", "Sky", "Sombra")

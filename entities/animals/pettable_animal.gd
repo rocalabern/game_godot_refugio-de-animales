@@ -12,11 +12,11 @@ const CARE_SHAKE_OFFSET := 3.0
 
 ## Ancho visible y físico medido en casillas. La altura visible se calcula a
 ## partir del aspect ratio de la zona opaca de la textura.
-@export_range(1, 4, 1) var visual_columns := 1:
+var visual_columns := 1:
 	set(value):
 		visual_columns = maxi(1, value)
 		_update_footprint()
-@export_range(1, 4, 1) var base_columns := 1:
+var base_columns := 1:
 	set(value):
 		base_columns = maxi(1, value)
 		_update_footprint()
@@ -43,6 +43,11 @@ var is_in_edit_mode := false
 func _ready() -> void:
 	provides_own_physics_body = true
 	is_interactable = true
+	apply_breed_definition()
+	if breed_definition != null:
+		visual_columns = breed_definition.visual_columns
+		base_columns = breed_definition.base_columns
+		visual.texture = breed_definition.visual_texture
 	_update_footprint()
 	interaction_area.input_event.connect(_on_interaction_area_input_event)
 	hand_action.input_event.connect(_on_hand_action_input_event)

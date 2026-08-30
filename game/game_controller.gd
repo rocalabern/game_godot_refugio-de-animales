@@ -18,10 +18,6 @@ const RESCUABLE_ANIMAL_SCENES: Array[PackedScene] = [
 	preload("res://entities/animals/birds/great_horned_owl.tscn"),
 	preload("res://entities/animals/birds/screech_owl.tscn"),
 ]
-const ANIMAL_NAMES: Array[String] = [
-	"Luna", "Toby", "Nala", "Max", "Kira", "Bruno", "Milo", "Coco",
-	"Lola", "Rocky", "Bimba", "Leo", "Duna", "Simba", "Noa", "Otto",
-]
 const RESCUED_ANIMAL_CELLS: Array[Vector2i] = [
 	Vector2i(7, 9), Vector2i(8, 9), Vector2i(9, 9), Vector2i(11, 9),
 	Vector2i(12, 9), Vector2i(13, 9), Vector2i(14, 9), Vector2i(15, 9),
@@ -300,7 +296,18 @@ func _on_animal_interaction_requested(animal: AnimalObject) -> void:
 
 func _register_rescued_animal() -> void:
 	var animal_scene := RESCUABLE_ANIMAL_SCENES[random.randi_range(0, RESCUABLE_ANIMAL_SCENES.size() - 1)]
-	var base_columns := _get_animal_base_columns(animal_scene)
+	var breed_definition := _get_animal_breed_definition(animal_scene)
+	if breed_definition == null:
+		push_warning("La escena rescatable no tiene AnimalBreedDefinition: %s" % animal_scene.resource_path)
+		return
+	var validation_errors := breed_definition.get_validation_errors()
+	if not validation_errors.is_empty():
+		push_warning("Configuración inválida para '%s': %s" % [breed_definition.breed_id, "; ".join(validation_errors)])
+		return
+	var base_columns := breed_definition.base_columns
+	var pet_name := breed_definition.pick_random_name(random)
+	if pet_name.is_empty():
+		return
 	var used_cells: Dictionary = {}
 	for animal_data in rescued_animals:
 		var occupied_base := animal_data.get("base_cell", Vector2i.ZERO) as Vector2i
@@ -320,19 +327,19 @@ func _register_rescued_animal() -> void:
 	rescued_animals.append({
 		"id": animal_id,
 		"scene": animal_scene,
-		"pet_name": ANIMAL_NAMES[random.randi_range(0, ANIMAL_NAMES.size() - 1)],
+		"pet_name": pet_name,
 		"base_cell": selected_cell,
 		"base_columns": base_columns,
 	})
 
 
-func _get_animal_base_columns(animal_scene: PackedScene) -> int:
-	var preview := animal_scene.instantiate() as PettableAnimal
+func _get_animal_breed_definition(animal_scene: PackedScene) -> AnimalBreedDefinition:
+	var preview := animal_scene.instantiate() as AnimalObject
 	if preview == null:
-		return 1
-	var width := preview.base_columns
+		return null
+	var definition := preview.breed_definition
 	preview.free()
-	return width
+	return definition
 
 
 func _can_reserve_rescue_cell(candidate: Vector2i, base_columns: int, used_cells: Dictionary, animal_scene: PackedScene) -> bool:

@@ -1,12 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="PackedScene" path="res://entities/animals/birds/bird.tscn" id="1_bird"]
-[ext_resource type="Texture2D" path="res://assets/animals/birds/great_horned_owl/great_horned_owl.png" id="2_texture"]
+[ext_resource type="Resource" path="res://entities/animals/config/breeds/birds/great_horned_owl.tres" id="2_breed"]
 
 [node name="BirdGreatHornedOwl" instance=ExtResource("1_bird")]
-raza = "Gran búho cornudo"
-edad = 4
-nombre = "Gran búho cornudo"
-
-[node name="Visual" parent="." index="0"]
-texture = ExtResource("2_texture")
+breed_definition = ExtResource("2_breed")

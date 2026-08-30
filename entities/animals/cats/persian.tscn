@@ -1,12 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="PackedScene" path="res://entities/animals/cats/cat.tscn" id="1_cat"]
-[ext_resource type="Texture2D" path="res://assets/animals/cats/persian/persian.png" id="2_texture"]
+[ext_resource type="Resource" path="res://entities/animals/config/breeds/cats/persian.tres" id="2_breed"]
 
 [node name="CatPersian" instance=ExtResource("1_cat")]
-raza = "Persa"
-edad = 3
-nombre = "Persa"
-
-[node name="Visual" parent="." index="0"]
-texture = ExtResource("2_texture")
+breed_definition = ExtResource("2_breed")

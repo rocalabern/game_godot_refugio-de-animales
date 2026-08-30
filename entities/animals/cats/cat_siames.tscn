@@ -1,13 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="PackedScene" path="res://entities/animals/cats/cat.tscn" id="1_cat"]
-[ext_resource type="Texture2D" path="res://assets/animals/cats/siamese/cat_siames.png" id="2_texture"]
+[ext_resource type="Resource" path="res://entities/animals/config/breeds/cats/siamese.tres" id="2_breed"]
 
 [node name="CatSiames" instance=ExtResource("1_cat")]
-raza = "Siames"
-edad = 3
-nombre = "Siamés"
-pet_name = "Roxy"
-
-[node name="Visual" parent="." index="0"]
-texture = ExtResource("2_texture")
+breed_definition = ExtResource("2_breed")

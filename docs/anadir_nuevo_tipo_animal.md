@@ -140,58 +140,24 @@ colisiones y el escalado.
 No se debe versionar una creatividad sin su escena consumidora, salvo que esté
 marcada expresamente como recurso pendiente.
 
-## 4. Registrar el tipo y sus razas en `AnimalObject`
+## 4. Registrar el tipo y la subraza
 
-Abrir `entities/animals/animal_object.gd`.
+Cada subraza se registra mediante un `AnimalBreedDefinition`, no ampliando un
+enum global en `AnimalObject`. Crear un `.tres` bajo
+`entities/animals/config/breeds/<tipo>/` y configurar:
 
-### 4.1. Añadir la especie al enum
+- `animal_type`;
+- `breed_id` técnico y estable;
+- `display_name` visible;
+- `default_age`;
+- `name_pool`;
+- `visual_columns` y `base_columns`;
+- `visual_texture`.
 
-La propiedad actual es:
+El recurso valida que tenga identidad, textura, nombres y geometría coherente.
+La documentación completa del contrato está en `docs/animals_oop_system.md`.
 
-```gdscript
-@export_enum("Cat", "Dog", "Bird") var tipo := "Cat"
-```
-
-Para otra especie, por ejemplo `Ferret`, se debe añadir al enum:
-
-```gdscript
-@export_enum("Cat", "Dog", "Bird", "Ferret") var tipo := "Cat"
-```
-
-Estos valores son identificadores internos estables. Evitar traducirlos o
-cambiarlos después de haber creado escenas que los utilicen.
-
-### 4.2. Añadir las razas al enum
-
-Incorporar cada raza nueva a `raza`:
-
-```gdscript
-@export_enum(
-    "Siames",
-    "Bengalí",
-    "British Shorthair",
-    "Persa",
-    "Beagle",
-    "Pastor alemán",
-    "Husky",
-    "Caniche",
-    "Periquito verde",
-    "Periquito blanco",
-    "Gran búho cornudo",
-    "Búho chillón",
-    "Sable"
-) var raza := "Siames"
-```
-
-El enum solo ayuda a editar desde el Inspector; el valor sigue siendo un
-`String`. El texto debe coincidir exactamente con el que se asignará en la
-escena de raza.
-
-Si el número de especies y razas crece mucho, convendrá sustituir este enum
-global por recursos de definición de especie/raza. Por ahora se debe seguir la
-convención existente para mantener el proyecto homogéneo.
-
-### 4.3. Añadir el nombre visible de la especie
+### Añadir el nombre visible de una especie nueva
 
 Ampliar `get_tipo_display_name()`:
 
@@ -308,58 +274,42 @@ path="res://entities/animals/ferrets/ferret.gd" id="2_ferret"]
 
 [node name="Ferret" instance=ExtResource("1_pettable")]
 script = ExtResource("2_ferret")
-tipo = "Ferret"
 ```
 
 La escena compartida ya contiene `Visual`, `InteractionArea`, `Body` y
-`HandAction`. No duplicar esos nodos. La escena de especie aporta el script y el
-valor `tipo`; la escena de raza aportará la textura y sus datos.
+`HandAction`. No duplicar esos nodos. La escena de especie aporta el script; la
+definición de cada subraza aporta tipo, identidad, textura y geometría.
 
 ## 8. Crear una escena por raza
 
-La escena de raza hereda de la escena base y solo aporta datos y creatividad.
-Ejemplo conceptual para `sable.tscn`:
+Crear primero `sable.tres` como `AnimalBreedDefinition`, referenciando su PNG y
+catálogo. La escena de raza solo enlaza ese objeto de configuración:
 
 ```gdscript
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="PackedScene"
 path="res://entities/animals/ferrets/ferret.tscn" id="1_ferret"]
-[ext_resource type="Texture2D"
-path="res://assets/animals/ferrets/sable/sable.png"
-id="2_texture"]
+[ext_resource type="Resource"
+path="res://entities/animals/config/breeds/ferrets/sable.tres"
+id="2_breed"]
 
 [node name="FerretSable" instance=ExtResource("1_ferret")]
-raza = "Sable"
-edad = 2
-nombre = "Sable"
-
-[node name="Visual" parent="." index="0"]
-texture = ExtResource("2_texture")
+breed_definition = ExtResource("2_breed")
 ```
-
-Significado de los campos:
-
-- `tipo`: lo hereda de `ferret.tscn`; no repetirlo en cada raza.
-- `raza`: valor visible y persistente de la raza.
-- `edad`: valor inicial para ejemplares colocados manualmente.
-- `nombre`: nombre descriptivo de respaldo.
-- `pet_name`: nombre individual; si está vacío, la ficha muestra `nombre`.
 
 No duplicar la jerarquía de nodos en cada raza. La herencia de escena permite
 que cualquier arreglo en `ferret.tscn` alcance automáticamente a todas ellas.
 
 ## 9. Configurar identidad, necesidades y personalidad
 
-Todos estos campos ya existen en `AnimalObject` y aparecen en el Inspector.
+La definición contiene los valores compartidos por la subraza. `AnimalObject`
+mantiene el estado individual del ejemplar.
 
 ### Identidad
 
-- `tipo`: especie técnica.
-- `raza`: raza visible.
-- `edad`: entero entre 0 y 100.
-- `nombre`: descripción o nombre por defecto.
-- `pet_name`: nombre individual mostrado como título de la ficha.
+- `animal_type`, `display_name` y `default_age`: proceden de la definición.
+- `pet_name`: nombre individual elegido desde el `AnimalNamePool`.
 
 ### Necesidades
 
@@ -398,40 +348,19 @@ la interfaz.
 
 ## 10. Listados de nombres
 
-Actualmente el catálogo está codificado en `game/game_controller.gd` como
-`ANIMAL_NAMES` y se utiliza para gatos, perros y aves rescatados:
+Los nombres viven en recursos `AnimalNamePool` bajo
+`entities/animals/config/name_pools/`. Cada `AnimalBreedDefinition` referencia
+el pool correspondiente. Varias subrazas pueden compartirlo sin copiar listas.
 
-```gdscript
-const ANIMAL_NAMES: Array[String] = [
-    "Luna", "Toby", "Nala", "Max", "Kira", "Bruno", "Milo", "Coco",
-    "Lola", "Rocky", "Bimba", "Leo", "Duna", "Simba", "Noa", "Otto",
-]
-```
+Para añadir nombres específicos a una subraza:
 
-Para animales colocados manualmente se puede establecer `pet_name` directamente
-en su escena o en tiempo de ejecución.
+1. reutilizar un pool existente o crear otro `.tres`;
+2. configurar `pool_id` y `names`;
+3. asignarlo a `name_pool` en la definición de subraza.
 
-Si una especie futura necesita nombres específicos, hay dos opciones:
-
-### Opción mínima
-
-Crear otro catálogo, por ejemplo `FERRET_NAMES`, y seleccionar el adecuado en
-el método que registre ese rescate.
-
-### Opción recomendada si habrá varias especies
-
-Reemplazar las constantes específicas por catálogos indexados por tipo:
-
-```gdscript
-const ANIMAL_NAMES := {
-    "Dog": ["Luna", "Toby", "Nala"],
-    "Ferret": ["Mochi", "Nube", "Canela"],
-}
-```
-
-La escena seleccionada ya conoce su `tipo` y `raza`; no se debe guardar una raza
-separada que pueda contradecir a la escena. El nombre elegido debe guardarse en
-`pet_name` para que la ficha lo use como título.
+`initialize_runtime_state()` y el sistema de rescate llaman a
+`breed_definition.pick_random_name()`. `GameController` ya no contiene
+catálogos de nombres.
 
 Conviene que los catálogos:
 

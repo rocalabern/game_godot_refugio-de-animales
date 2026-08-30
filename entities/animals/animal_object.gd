@@ -5,11 +5,13 @@ extends PlaceableObject
 ## Las especies concretas amplían comportamiento, pero la ficha se alimenta de
 ## estos datos sin necesitar conocer la clase Cat, Dog o Bird.
 @export_category("Identidad")
-@export_enum("Cat", "Dog", "Bird") var tipo := "Cat"
-@export_enum("Siames", "Bengalí", "British Shorthair", "Persa", "Beagle", "Pastor alemán", "Husky", "Caniche", "Periquito verde", "Periquito blanco", "Gran búho cornudo", "Búho chillón") var raza := "Siames"
-@export_range(0, 100, 1) var edad: int = 0
-@export var nombre := "Animal"
+@export var breed_definition: AnimalBreedDefinition
 @export var pet_name := ""
+
+var tipo := "Cat"
+var raza := ""
+var edad := 0
+var nombre := "Animal"
 
 @export_category("Necesidades")
 @export_range(0.0, 100.0, 1.0) var salud := 100.0
@@ -43,6 +45,16 @@ func receive_care(amount := 15.0) -> void:
 	felicidad = minf(100.0, felicidad + amount)
 
 
+func apply_breed_definition() -> void:
+	if breed_definition == null:
+		push_warning("El animal '%s' no tiene AnimalBreedDefinition." % name)
+		return
+	tipo = breed_definition.animal_type
+	raza = breed_definition.display_name
+	nombre = breed_definition.display_name
+	edad = breed_definition.default_age
+
+
 func initialize_runtime_state(random: RandomNumberGenerator) -> void:
 	# Cada animal recibe sus valores una única vez al entrar por primera vez en
 	# la partida. Después se conserva su ficha de estado en GameController.
@@ -55,10 +67,13 @@ func initialize_runtime_state(random: RandomNumberGenerator) -> void:
 	caracteristica_sociable = random.randi_range(0, 100)
 	caracteristica_dependiente = random.randi_range(0, 100)
 	caracteristica_adistramiento = random.randi_range(0, 100)
+	if pet_name.is_empty() and breed_definition != null:
+		pet_name = breed_definition.pick_random_name(random)
 
 
 func get_runtime_state() -> Dictionary:
 	return {
+		"pet_name": pet_name,
 		"salud": salud,
 		"hambre": hambre,
 		"higiene": higiene,
@@ -72,6 +87,7 @@ func get_runtime_state() -> Dictionary:
 
 
 func apply_runtime_state(state: Dictionary) -> void:
+	pet_name = String(state.get("pet_name", pet_name))
 	salud = float(state.get("salud", salud))
 	hambre = float(state.get("hambre", hambre))
 	higiene = float(state.get("higiene", higiene))

@@ -30,10 +30,12 @@ declaran la identidad de especie. Ninguna debe ser consultada por una
 habitación: se colocan mediante `PlacedObjectData` y se consumen como
 `AnimalObject`.
 
-Las escenas de raza heredan de la escena de su especie y aportan únicamente
-identidad y textura. Hay cuatro gatos (siamés, bengalí, british shorthair y
-persa), cuatro perros (beagle, pastor alemán, husky y caniche) y cuatro aves
-(periquito verde, periquito blanco, gran búho cornudo y búho chillón).
+Las escenas de subraza heredan de la escena de su especie y referencian un
+`AnimalBreedDefinition`. Este recurso es la fuente de verdad de identidad,
+textura, edad, geometría y `AnimalNamePool`. Hay cuatro gatos (siamés, bengalí,
+british shorthair y persa), cuatro perros (beagle, pastor alemán, husky y
+caniche) y cuatro aves (periquito verde, periquito blanco, gran búho cornudo y
+búho chillón). El diseño completo está en `docs/animals_oop_system.md`.
 
 `AnimalObject` contiene los datos de identidad (`tipo`, `raza`, `edad`,
 `nombre`, `pet_name`), necesidades (`salud`, `hambre`, `higiene`, `felicidad`, `energia`) y las cuatro
@@ -162,5 +164,5 @@ puerta, el hitbox normalizado del edificio y el radio seguro sin encuentros.
 Los nombres técnicos de archivos, escenas, recursos, nodos e IDs usan
 `snake_case`. El idioma se elige según el vocabulario acordado por el equipo;
 por ejemplo, `cat_siames` es un identificador técnico válido. Los nombres que
-ve la persona jugadora se guardan por separado, por ejemplo
-`nombre = "Siamés"`.
+ve la persona jugadora se guardan por separado en la definición, por ejemplo
+`display_name = "Siamés"`.
