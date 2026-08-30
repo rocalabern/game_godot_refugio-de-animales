@@ -1,87 +1,27 @@
-[gd_resource type="Resource" script_class="AnimalPickupBackdropCatalog" load_steps=43 format=3]
+[gd_resource type="Resource" script_class="AnimalPickupBackdropCatalog" format=3 uid="uid://x76ymwlt7fmb"]
 
-[ext_resource type="Script" path="res://minigames/animal_pickup/animal_pickup_backdrop.gd" id="1_backdrop"]
-[ext_resource type="Script" path="res://minigames/animal_pickup/animal_pickup_backdrop_catalog.gd" id="2_catalog"]
-[ext_resource type="Texture2D" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_forest_01.png" id="f01"]
-[ext_resource type="Texture2D" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_forest_02.png" id="f02"]
-[ext_resource type="Texture2D" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_forest_03.png" id="f03"]
-[ext_resource type="Texture2D" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_forest_04.png" id="f04"]
-[ext_resource type="Texture2D" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_forest_05.png" id="f05"]
-[ext_resource type="Texture2D" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_forest_06.png" id="f06"]
-[ext_resource type="Texture2D" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_forest_07.png" id="f07"]
-[ext_resource type="Texture2D" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_forest_08.png" id="f08"]
-[ext_resource type="Texture2D" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_forest_09.png" id="f09"]
-[ext_resource type="Texture2D" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_forest_10.png" id="f10"]
-[ext_resource type="Texture2D" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_city_01.png" id="c01"]
-[ext_resource type="Texture2D" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_city_02.png" id="c02"]
-[ext_resource type="Texture2D" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_city_03.png" id="c03"]
-[ext_resource type="Texture2D" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_city_04.png" id="c04"]
-[ext_resource type="Texture2D" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_city_05.png" id="c05"]
-[ext_resource type="Texture2D" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_city_06.png" id="c06"]
-[ext_resource type="Texture2D" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_city_07.png" id="c07"]
-[ext_resource type="Texture2D" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_city_08.png" id="c08"]
-[ext_resource type="Texture2D" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_city_09.png" id="c09"]
-[ext_resource type="Texture2D" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_city_10.png" id="c10"]
-
-[sub_resource type="Resource" id="Forest01"]
-script = ExtResource("1_backdrop")
-environment = "forest"
-texture = ExtResource("f01")
-animal_hit_rect = Rect2(0.25, 0.27, 0.16, 0.18)
-
-[sub_resource type="Resource" id="Forest02"]
-script = ExtResource("1_backdrop")
-environment = "forest"
-texture = ExtResource("f02")
-animal_hit_rect = Rect2(0.28, 0.33, 0.16, 0.18)
-
-[sub_resource type="Resource" id="Forest03"]
-script = ExtResource("1_backdrop")
-environment = "forest"
-texture = ExtResource("f03")
-animal_hit_rect = Rect2(0.31, 0.26, 0.16, 0.18)
-
-[sub_resource type="Resource" id="Forest04"]
-script = ExtResource("1_backdrop")
-environment = "forest"
-texture = ExtResource("f04")
-animal_hit_rect = Rect2(0.46, 0.30, 0.16, 0.18)
-
-[sub_resource type="Resource" id="Forest05"]
-script = ExtResource("1_backdrop")
-environment = "forest"
-texture = ExtResource("f05")
-animal_hit_rect = Rect2(0.61, 0.30, 0.16, 0.18)
-
-[sub_resource type="Resource" id="Forest06"]
-script = ExtResource("1_backdrop")
-environment = "forest"
-texture = ExtResource("f06")
-animal_hit_rect = Rect2(0.22, 0.41, 0.16, 0.18)
-
-[sub_resource type="Resource" id="Forest07"]
-script = ExtResource("1_backdrop")
-environment = "forest"
-texture = ExtResource("f07")
-animal_hit_rect = Rect2(0.28, 0.38, 0.16, 0.18)
-
-[sub_resource type="Resource" id="Forest08"]
-script = ExtResource("1_backdrop")
-environment = "forest"
-texture = ExtResource("f08")
-animal_hit_rect = Rect2(0.47, 0.33, 0.16, 0.18)
-
-[sub_resource type="Resource" id="Forest09"]
-script = ExtResource("1_backdrop")
-environment = "forest"
-texture = ExtResource("f09")
-animal_hit_rect = Rect2(0.60, 0.44, 0.16, 0.18)
-
-[sub_resource type="Resource" id="Forest10"]
-script = ExtResource("1_backdrop")
-environment = "forest"
-texture = ExtResource("f10")
-animal_hit_rect = Rect2(0.57, 0.40, 0.16, 0.18)
+[ext_resource type="Script" uid="uid://cxsukvx6di5i3" path="res://minigames/animal_pickup/animal_pickup_backdrop.gd" id="1_backdrop"]
+[ext_resource type="Script" uid="uid://d06grt8kvdawp" path="res://minigames/animal_pickup/animal_pickup_backdrop_catalog.gd" id="2_catalog"]
+[ext_resource type="Texture2D" uid="uid://bokf01ctc28q0" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_city_01.png" id="c01"]
+[ext_resource type="Texture2D" uid="uid://ljoagn2q46qv" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_city_02.png" id="c02"]
+[ext_resource type="Texture2D" uid="uid://bcysj6e3w80u6" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_city_03.png" id="c03"]
+[ext_resource type="Texture2D" uid="uid://cagjcojfk6mux" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_city_04.png" id="c04"]
+[ext_resource type="Texture2D" uid="uid://bsdhwdeubc2dd" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_city_05.png" id="c05"]
+[ext_resource type="Texture2D" uid="uid://cuh6dychg1rqb" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_city_06.png" id="c06"]
+[ext_resource type="Texture2D" uid="uid://rb7tnxuh6kki" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_city_07.png" id="c07"]
+[ext_resource type="Texture2D" uid="uid://cc2iuiu4mst0e" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_city_08.png" id="c08"]
+[ext_resource type="Texture2D" uid="uid://dl2mwdwulsh76" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_city_09.png" id="c09"]
+[ext_resource type="Texture2D" uid="uid://buj4qlpafe5fr" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_city_10.png" id="c10"]
+[ext_resource type="Texture2D" uid="uid://b7avko34v2dfq" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_forest_01.png" id="f01"]
+[ext_resource type="Texture2D" uid="uid://chkcqelb3nemn" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_forest_02.png" id="f02"]
+[ext_resource type="Texture2D" uid="uid://ds06gnu2iy3ps" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_forest_03.png" id="f03"]
+[ext_resource type="Texture2D" uid="uid://bc4rlqik5ktsn" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_forest_04.png" id="f04"]
+[ext_resource type="Texture2D" uid="uid://ctnpgixhi3m5q" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_forest_05.png" id="f05"]
+[ext_resource type="Texture2D" uid="uid://ddn72doiqlf3h" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_forest_06.png" id="f06"]
+[ext_resource type="Texture2D" uid="uid://c3bn5e5aj3h88" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_forest_07.png" id="f07"]
+[ext_resource type="Texture2D" uid="uid://d3qrvbly53411" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_forest_08.png" id="f08"]
+[ext_resource type="Texture2D" uid="uid://cstabli1hq1hq" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_forest_09.png" id="f09"]
+[ext_resource type="Texture2D" uid="uid://l58gh015poj0" path="res://assets/rooms/minijuegos/minijuego_recogida_animal_forest_10.png" id="f10"]
 
 [sub_resource type="Resource" id="City01"]
 script = ExtResource("1_backdrop")
@@ -111,7 +51,7 @@ animal_hit_rect = Rect2(0.47, 0.34, 0.16, 0.18)
 script = ExtResource("1_backdrop")
 environment = "city"
 texture = ExtResource("c05")
-animal_hit_rect = Rect2(0.64, 0.40, 0.16, 0.18)
+animal_hit_rect = Rect2(0.64, 0.4, 0.16, 0.18)
 
 [sub_resource type="Resource" id="City06"]
 script = ExtResource("1_backdrop")
@@ -123,7 +63,7 @@ animal_hit_rect = Rect2(0.25, 0.41, 0.16, 0.18)
 script = ExtResource("1_backdrop")
 environment = "city"
 texture = ExtResource("c07")
-animal_hit_rect = Rect2(0.30, 0.60, 0.16, 0.18)
+animal_hit_rect = Rect2(0.3, 0.6, 0.16, 0.18)
 
 [sub_resource type="Resource" id="City08"]
 script = ExtResource("1_backdrop")
@@ -142,6 +82,56 @@ script = ExtResource("1_backdrop")
 environment = "city"
 texture = ExtResource("c10")
 animal_hit_rect = Rect2(0.67, 0.43, 0.16, 0.18)
+
+[sub_resource type="Resource" id="Forest01"]
+script = ExtResource("1_backdrop")
+texture = ExtResource("f01")
+animal_hit_rect = Rect2(0.25, 0.27, 0.16, 0.18)
+
+[sub_resource type="Resource" id="Forest02"]
+script = ExtResource("1_backdrop")
+texture = ExtResource("f02")
+animal_hit_rect = Rect2(0.28, 0.33, 0.16, 0.18)
+
+[sub_resource type="Resource" id="Forest03"]
+script = ExtResource("1_backdrop")
+texture = ExtResource("f03")
+animal_hit_rect = Rect2(0.31, 0.26, 0.16, 0.18)
+
+[sub_resource type="Resource" id="Forest04"]
+script = ExtResource("1_backdrop")
+texture = ExtResource("f04")
+animal_hit_rect = Rect2(0.46, 0.3, 0.16, 0.18)
+
+[sub_resource type="Resource" id="Forest05"]
+script = ExtResource("1_backdrop")
+texture = ExtResource("f05")
+animal_hit_rect = Rect2(0.61, 0.3, 0.16, 0.18)
+
+[sub_resource type="Resource" id="Forest06"]
+script = ExtResource("1_backdrop")
+texture = ExtResource("f06")
+animal_hit_rect = Rect2(0.22, 0.41, 0.16, 0.18)
+
+[sub_resource type="Resource" id="Forest07"]
+script = ExtResource("1_backdrop")
+texture = ExtResource("f07")
+animal_hit_rect = Rect2(0.28, 0.38, 0.16, 0.18)
+
+[sub_resource type="Resource" id="Forest08"]
+script = ExtResource("1_backdrop")
+texture = ExtResource("f08")
+animal_hit_rect = Rect2(0.47, 0.33, 0.16, 0.18)
+
+[sub_resource type="Resource" id="Forest09"]
+script = ExtResource("1_backdrop")
+texture = ExtResource("f09")
+animal_hit_rect = Rect2(0.6, 0.44, 0.16, 0.18)
+
+[sub_resource type="Resource" id="Forest10"]
+script = ExtResource("1_backdrop")
+texture = ExtResource("f10")
+animal_hit_rect = Rect2(0.57, 0.4, 0.16, 0.18)
 
 [resource]
 script = ExtResource("2_catalog")

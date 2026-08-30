@@ -61,7 +61,7 @@ visible = false
 offset_left = 744.0
 offset_top = 56.0
 offset_right = 992.0
-offset_bottom = 278.0
+offset_bottom = 330.0
 theme_override_styles/panel = SubResource("StyleMenuPanel")
 
 [node name="Margin" type="MarginContainer" parent="MenuUI/MenuPanel"]
@@ -112,3 +112,13 @@ theme_override_styles/normal = SubResource("StyleMenuButton")
 theme_override_styles/hover = SubResource("StyleMenuButtonHover")
 theme_override_styles/pressed = SubResource("StyleMenuButtonHover")
 text = "Mapa"
+
+[node name="CureButton" type="Button" parent="MenuUI/MenuPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.94, 0.96, 1)
+theme_override_font_sizes/font_size = 19
+theme_override_styles/normal = SubResource("StyleMenuButton")
+theme_override_styles/hover = SubResource("StyleMenuButtonHover")
+theme_override_styles/pressed = SubResource("StyleMenuButtonHover")
+text = "Curar"

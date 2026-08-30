@@ -2,6 +2,7 @@ class_name GameController
 extends Node2D
 
 const ANIMAL_PICKUP_MINIGAME := preload("res://minigames/animal_pickup/animal_pickup_minigame.tscn")
+const CURE_MINIGAME := preload("res://minigames/cure/cure_minigame.tscn")
 const WORLD_MAP := preload("res://map/map_scene.tscn")
 const SHELTER_ENTRANCE := preload("res://rooms/shelter_entrada/shelter_entrada.tscn")
 const RESCUABLE_ANIMAL_SCENES: Array[PackedScene] = [
@@ -47,6 +48,7 @@ var room_table_positions: Dictionary = {}
 var animal_states: Dictionary = {}
 var random := RandomNumberGenerator.new()
 var animal_pickup_minigame: AnimalPickupMinigame
+var cure_minigame: CureMinigame
 var world_map: WorldMap
 var map_source_doorway: Doorway
 var rescued_animals: Array[Dictionary] = []
@@ -59,6 +61,7 @@ var next_rescued_animal_id := 1
 @onready var edit_button: Button = $MenuUI/MenuPanel/Margin/Content/EditButton
 @onready var pickup_button: Button = $MenuUI/MenuPanel/Margin/Content/PickupButton
 @onready var map_button: Button = $MenuUI/MenuPanel/Margin/Content/MapButton
+@onready var cure_button: Button = $MenuUI/MenuPanel/Margin/Content/CureButton
 
 
 func _ready() -> void:
@@ -67,6 +70,7 @@ func _ready() -> void:
 	edit_button.pressed.connect(start_edit_mode)
 	pickup_button.pressed.connect(open_animal_pickup_minigame)
 	map_button.pressed.connect(open_world_map)
+	cure_button.pressed.connect(open_cure_minigame)
 	set_menu_open(false)
 	cell_size = Vector2(get_viewport_rect().size.x / screen_columns, get_viewport_rect().size.y / (room_rows + menu_rows))
 	room_top_row = menu_rows
@@ -205,6 +209,24 @@ func open_world_map() -> void:
 	world_map.closed.connect(_on_world_map_closed)
 	world_map.animal_pickup_requested.connect(open_animal_pickup_minigame)
 	add_child(world_map)
+
+
+func open_cure_minigame() -> void:
+	if cure_minigame != null:
+		return
+	set_menu_open(false)
+	if player != null:
+		player.stop()
+	cure_minigame = CURE_MINIGAME.instantiate() as CureMinigame
+	cure_minigame.closed.connect(_on_cure_minigame_closed)
+	add_child(cure_minigame)
+
+
+func _on_cure_minigame_closed() -> void:
+	if cure_minigame == null:
+		return
+	cure_minigame.queue_free()
+	cure_minigame = null
 
 
 func _on_world_map_closed(return_to_shelter: bool) -> void:
